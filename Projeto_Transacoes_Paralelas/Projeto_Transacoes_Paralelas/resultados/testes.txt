@@ -1,0 +1,14 @@
+TESTES DE CORRETUDE
+
+  [Integrante 1] Agregação financeira ........ OK
+  [Integrante 1] Detecção de suspeitas ....... OK
+  [Integrante 2] Estatísticas por categoria .. OK
+  [Integrante 2] Faixas e desvio padrão ...... OK
+  [Integrante 3] Gerador de dados ............ OK
+  [Base comum]   Divisão dos blocos .......... OK
+  [Base comum]   Paralelo = sequencial ....... OK (5 análises, 6 tamanhos, 1 a 8 threads)
+
+TODOS OS TESTES DE CÁLCULO PASSARAM (451 verificações).
+
+AFINIDADE: OK | CPUs pedidas 0,1 | observadas 0,1 | todas as threads rodaram só na CPU pedida
+(Os cálculos com o pool fixado também bateram com o sequencial.)

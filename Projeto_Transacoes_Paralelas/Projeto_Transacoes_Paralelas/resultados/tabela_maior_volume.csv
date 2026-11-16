@@ -1,0 +1,61 @@
+﻿Análise;Configuração;Threads;Tarefas;Tempo (ms);Mínimo (ms);Máximo (ms);Speedup;Eficiência (%)
+Agregação;Sequencial;1;1;378,902;374,411;385,206;1,00;100,0
+Agregação;Executor;1;4;380,216;376,209;390,308;1,00;99,7
+Agregação;Executor;2;8;196,817;194,901;241,906;1,93;96,3
+Agregação;Executor;4;16;132,269;107,087;194,549;2,86;71,6
+Agregação;Executor;8;32;127,742;124,977;134,441;2,97;37,1
+Agregação;Executor+Affinity;1;4;376,507;374,897;385,549;1,01;100,6
+Agregação;Executor+Affinity;2;8;302,122;300,736;303,332;1,25;62,7
+Agregação;Executor+Affinity;4;16;157,204;153,968;198,007;2,41;60,3
+Agregação;Executor+Affinity;8;32;168,967;84,534;180,988;2,24;28,0
+Agregação;Executor+Affinity-nucleo;2;8;191,897;190,547;194,584;1,97;98,7
+Agregação;Executor+Affinity-nucleo;4;16;129,372;114,679;175,497;2,93;73,2
+Agregação;Executor+Affinity-nucleo;8;32;127,542;124,692;140,796;2,97;37,1
+Suspeitas;Sequencial;1;1;1.610,765;1.605,129;1.668,667;1,00;100,0
+Suspeitas;Executor;1;4;1.615,134;1.598,338;1.660,281;1,00;99,7
+Suspeitas;Executor;2;8;851,639;820,874;855,370;1,89;94,6
+Suspeitas;Executor;4;16;465,553;451,480;493,230;3,46;86,5
+Suspeitas;Executor;8;32;492,340;487,830;497,522;3,27;40,9
+Suspeitas;Executor+Affinity;1;4;1.608,381;1.606,766;1.615,515;1,00;100,1
+Suspeitas;Executor+Affinity;2;8;971,569;969,609;975,682;1,66;82,9
+Suspeitas;Executor+Affinity;4;16;504,431;500,026;510,913;3,19;79,8
+Suspeitas;Executor+Affinity;8;32;529,712;440,466;533,418;3,04;38,0
+Suspeitas;Executor+Affinity-nucleo;2;8;811,134;809,975;825,416;1,99;99,3
+Suspeitas;Executor+Affinity-nucleo;4;16;473,719;437,396;537,912;3,40;85,0
+Suspeitas;Executor+Affinity-nucleo;8;32;492,602;489,017;496,945;3,27;40,9
+Categorias;Sequencial;1;1;1.066,066;1.021,850;1.107,954;1,00;100,0
+Categorias;Executor;1;4;1.055,476;890,670;1.076,363;1,01;101,0
+Categorias;Executor;2;8;563,514;528,904;571,511;1,89;94,6
+Categorias;Executor;4;16;475,513;317,764;536,716;2,24;56,0
+Categorias;Executor;8;32;301,307;275,633;315,509;3,54;44,2
+Categorias;Executor+Affinity;1;4;1.050,607;939,829;1.069,040;1,01;101,5
+Categorias;Executor+Affinity;2;8;764,283;752,941;776,319;1,39;69,7
+Categorias;Executor+Affinity;4;16;402,390;397,523;411,518;2,65;66,2
+Categorias;Executor+Affinity;8;32;426,006;424,219;436,158;2,50;31,3
+Categorias;Executor+Affinity-nucleo;2;8;535,004;523,513;540,299;1,99;99,6
+Categorias;Executor+Affinity-nucleo;4;16;481,469;338,745;537,209;2,21;55,4
+Categorias;Executor+Affinity-nucleo;8;32;304,569;277,411;319,576;3,50;43,8
+Faixas e desvio padrão;Sequencial;1;1;2.945,481;2.918,011;2.986,481;1,00;100,0
+Faixas e desvio padrão;Executor;1;4;2.958,148;2.921,711;2.987,074;1,00;99,6
+Faixas e desvio padrão;Executor;2;8;1.506,055;1.497,299;1.553,125;1,96;97,8
+Faixas e desvio padrão;Executor;4;16;813,346;803,977;862,258;3,62;90,5
+Faixas e desvio padrão;Executor;8;32;872,111;865,614;890,781;3,38;42,2
+Faixas e desvio padrão;Executor+Affinity;1;4;2.982,500;2.935,183;3.040,322;0,99;98,8
+Faixas e desvio padrão;Executor+Affinity;2;8;1.802,795;1.773,033;1.893,053;1,63;81,7
+Faixas e desvio padrão;Executor+Affinity;4;16;946,315;896,207;981,797;3,11;77,8
+Faixas e desvio padrão;Executor+Affinity;8;32;995,638;979,875;1.008,302;2,96;37,0
+Faixas e desvio padrão;Executor+Affinity-nucleo;2;8;1.497,718;1.479,601;1.502,760;1,97;98,3
+Faixas e desvio padrão;Executor+Affinity-nucleo;4;16;824,265;752,706;856,010;3,57;89,3
+Faixas e desvio padrão;Executor+Affinity-nucleo;8;32;874,802;866,042;881,741;3,37;42,1
+Completa (1 passada);Sequencial;1;1;5.727,073;5.633,351;5.912,575;1,00;100,0
+Completa (1 passada);Executor;1;4;5.681,141;5.622,348;5.943,128;1,01;100,8
+Completa (1 passada);Executor;2;8;3.020,060;2.906,850;3.118,770;1,90;94,8
+Completa (1 passada);Executor;4;16;1.792,289;1.616,967;2.986,498;3,20;79,9
+Completa (1 passada);Executor;8;32;1.768,399;1.753,286;1.900,657;3,24;40,5
+Completa (1 passada);Executor+Affinity;1;4;5.667,749;5.641,987;5.734,512;1,01;101,0
+Completa (1 passada);Executor+Affinity;2;8;3.728,340;3.686,180;3.806,922;1,54;76,8
+Completa (1 passada);Executor+Affinity;4;16;1.936,169;1.902,343;2.262,167;2,96;73,9
+Completa (1 passada);Executor+Affinity;8;32;2.033,547;2.009,308;2.056,905;2,82;35,2
+Completa (1 passada);Executor+Affinity-nucleo;2;8;2.862,329;2.830,974;2.908,572;2,00;100,0
+Completa (1 passada);Executor+Affinity-nucleo;4;16;1.970,047;1.743,013;2.942,196;2,91;72,7
+Completa (1 passada);Executor+Affinity-nucleo;8;32;1.760,581;1.741,453;1.767,907;3,25;40,7

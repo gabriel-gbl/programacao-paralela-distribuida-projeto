@@ -1,0 +1,506 @@
+==============================================================
+ ANÁLISE PARALELA DE TRANSAÇÕES FINANCEIRAS
+==============================================================
+Data: 18/10/2026 20:10
+Sistema: Windows 11 10.0 (amd64)
+Processador: AMD Ryzen 7 5700U with Radeon Graphics
+CPUs lógicas: 16 | Memória máxima do Java: 4,0 GB | Java 21.0.12.1
+Volumes: 100.000.000 | Threads: 1,2,4,8 | Tarefas por thread: 1,4,64,4096 | Repetições: 10
+Análises: agregacao, suspeitas, categorias, faixas, completa | Modos: Sequencial, Executor
+
+Gerando 100.000.000 transações (uma vez, em paralelo, fora das medições)...
+Dados prontos em 0,7 s (477 MB na memória).
+
+CPUs lógicas permitidas para o processo: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 73,509 ms  (mín 72,526 | máx 76,096 | desvio 1,432)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 1
+Tempo: 51,784 ms  (mín 51,169 | máx 53,941 | desvio 0,895)
+Speedup: 1,42
+Eficiência: 142,0%
+
+Threads: 2 | Tarefas: 2
+Tempo: 26,880 ms  (mín 26,316 | máx 40,243 | desvio 4,347)
+Speedup: 2,73
+Eficiência: 136,7%
+
+Threads: 4 | Tarefas: 4
+Tempo: 28,727 ms  (mín 26,582 | máx 29,004 | desvio 0,706)
+Speedup: 2,56
+Eficiência: 64,0%
+
+Threads: 8 | Tarefas: 8
+Tempo: 21,419 ms  (mín 19,701 | máx 27,152 | desvio 2,159)
+Speedup: 3,43
+Eficiência: 42,9%
+
+Threads: 1 | Tarefas: 4
+Tempo: 52,314 ms  (mín 51,358 | máx 58,911 | desvio 2,408)
+Speedup: 1,41
+Eficiência: 140,5%
+
+Threads: 2 | Tarefas: 8
+Tempo: 26,470 ms  (mín 26,124 | máx 26,807 | desvio 0,270)
+Speedup: 2,78
+Eficiência: 138,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 28,084 ms  (mín 27,108 | máx 28,928 | desvio 0,641)
+Speedup: 2,62
+Eficiência: 65,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 21,591 ms  (mín 15,573 | máx 24,186 | desvio 2,202)
+Speedup: 3,40
+Eficiência: 42,6%
+
+Threads: 1 | Tarefas: 64
+Tempo: 52,574 ms  (mín 51,962 | máx 53,728 | desvio 0,653)
+Speedup: 1,40
+Eficiência: 139,8%
+
+Threads: 2 | Tarefas: 128
+Tempo: 27,163 ms  (mín 26,521 | máx 29,469 | desvio 0,864)
+Speedup: 2,71
+Eficiência: 135,3%
+
+Threads: 4 | Tarefas: 256
+Tempo: 28,184 ms  (mín 26,861 | máx 28,930 | desvio 0,610)
+Speedup: 2,61
+Eficiência: 65,2%
+
+Threads: 8 | Tarefas: 512
+Tempo: 21,622 ms  (mín 20,403 | máx 22,824 | desvio 0,787)
+Speedup: 3,40
+Eficiência: 42,5%
+
+Threads: 1 | Tarefas: 4096
+Tempo: 62,554 ms  (mín 61,875 | máx 68,357 | desvio 1,916)
+Speedup: 1,18
+Eficiência: 117,5%
+
+Threads: 2 | Tarefas: 8192
+Tempo: 33,264 ms  (mín 31,560 | máx 43,302 | desvio 3,799)
+Speedup: 2,21
+Eficiência: 110,5%
+
+Threads: 4 | Tarefas: 16384
+Tempo: 44,589 ms  (mín 40,445 | máx 47,518 | desvio 1,910)
+Speedup: 1,65
+Eficiência: 41,2%
+
+Threads: 8 | Tarefas: 32768
+Tempo: 56,658 ms  (mín 55,382 | máx 64,875 | desvio 3,291)
+Speedup: 1,30
+Eficiência: 16,2%
+
+Resultado da análise (100.000.000 transações):
+  Quantidade: 100.000.000
+  Soma: R$ 55.847.598.458,45
+  Média: R$ 558,48
+  Maior transação: R$ 121.494,94 (ID 79949751)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 320,128 ms  (mín 318,898 | máx 322,679 | desvio 1,517)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 1
+Tempo: 319,746 ms  (mín 318,195 | máx 320,298 | desvio 0,562)
+Speedup: 1,00
+Eficiência: 100,1%
+
+Threads: 2 | Tarefas: 2
+Tempo: 161,501 ms  (mín 160,641 | máx 166,433 | desvio 1,808)
+Speedup: 1,98
+Eficiência: 99,1%
+
+Threads: 4 | Tarefas: 4
+Tempo: 84,713 ms  (mín 82,228 | máx 123,315 | desvio 15,410)
+Speedup: 3,78
+Eficiência: 94,5%
+
+Threads: 8 | Tarefas: 8
+Tempo: 98,837 ms  (mín 97,479 | máx 124,320 | desvio 8,196)
+Speedup: 3,24
+Eficiência: 40,5%
+
+Threads: 1 | Tarefas: 4
+Tempo: 319,618 ms  (mín 319,020 | máx 322,761 | desvio 1,296)
+Speedup: 1,00
+Eficiência: 100,2%
+
+Threads: 2 | Tarefas: 8
+Tempo: 161,109 ms  (mín 160,616 | máx 162,512 | desvio 0,525)
+Speedup: 1,99
+Eficiência: 99,4%
+
+Threads: 4 | Tarefas: 16
+Tempo: 103,067 ms  (mín 81,973 | máx 113,122 | desvio 13,547)
+Speedup: 3,11
+Eficiência: 77,7%
+
+Threads: 8 | Tarefas: 32
+Tempo: 99,335 ms  (mín 96,956 | máx 101,010 | desvio 1,222)
+Speedup: 3,22
+Eficiência: 40,3%
+
+Threads: 1 | Tarefas: 64
+Tempo: 320,507 ms  (mín 319,738 | máx 362,569 | desvio 13,321)
+Speedup: 1,00
+Eficiência: 99,9%
+
+Threads: 2 | Tarefas: 128
+Tempo: 161,435 ms  (mín 160,919 | máx 162,298 | desvio 0,437)
+Speedup: 1,98
+Eficiência: 99,2%
+
+Threads: 4 | Tarefas: 256
+Tempo: 110,683 ms  (mín 83,733 | máx 125,414 | desvio 10,958)
+Speedup: 2,89
+Eficiência: 72,3%
+
+Threads: 8 | Tarefas: 512
+Tempo: 99,195 ms  (mín 98,418 | máx 100,377 | desvio 0,649)
+Speedup: 3,23
+Eficiência: 40,3%
+
+Threads: 1 | Tarefas: 4096
+Tempo: 332,523 ms  (mín 331,293 | máx 375,847 | desvio 13,743)
+Speedup: 0,96
+Eficiência: 96,3%
+
+Threads: 2 | Tarefas: 8192
+Tempo: 172,027 ms  (mín 170,832 | máx 187,206 | desvio 4,880)
+Speedup: 1,86
+Eficiência: 93,0%
+
+Threads: 4 | Tarefas: 16384
+Tempo: 181,290 ms  (mín 97,992 | máx 191,109 | desvio 28,379)
+Speedup: 1,77
+Eficiência: 44,1%
+
+Threads: 8 | Tarefas: 32768
+Tempo: 123,001 ms  (mín 121,663 | máx 175,352 | desvio 16,574)
+Speedup: 2,60
+Eficiência: 32,5%
+
+Resultado da análise (100.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 89.908 (0,090%)
+  Regra 2 (Eletrônicos > R$ 5.000): 543.120 (0,543%)
+  Suspeitas (sem repetir): 558.723 (0,559%) | valor total: R$ 4.715.390.713,62
+  10 maiores suspeitas:
+     1. ID 79.949.751      R$ 121.494,94  Eletrônicos
+     2. ID 15.824.745      R$ 102.533,27  Eletrônicos
+     3. ID 99.196.768       R$ 94.998,12  Eletrônicos
+     4. ID 64.489.509       R$ 87.528,21  Eletrônicos
+     5. ID 42.643.412       R$ 84.513,79  Eletrônicos
+     6. ID 87.869.575       R$ 81.580,72  Eletrônicos
+     7. ID 69.822.135       R$ 81.540,60  Eletrônicos
+     8. ID 33.574.408       R$ 80.873,14  Eletrônicos
+     9. ID 51.617.900       R$ 80.863,96  Eletrônicos
+    10. ID 50.167.780       R$ 80.603,25  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 210,972 ms  (mín 184,962 | máx 213,194 | desvio 11,020)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 1
+Tempo: 195,668 ms  (mín 153,830 | máx 213,499 | desvio 23,872)
+Speedup: 1,08
+Eficiência: 107,8%
+
+Threads: 2 | Tarefas: 2
+Tempo: 101,332 ms  (mín 95,738 | máx 109,536 | desvio 4,527)
+Speedup: 2,08
+Eficiência: 104,1%
+
+Threads: 4 | Tarefas: 4
+Tempo: 97,945 ms  (mín 87,207 | máx 108,004 | desvio 7,619)
+Speedup: 2,15
+Eficiência: 53,8%
+
+Threads: 8 | Tarefas: 8
+Tempo: 59,958 ms  (mín 53,723 | máx 75,087 | desvio 7,737)
+Speedup: 3,52
+Eficiência: 44,0%
+
+Threads: 1 | Tarefas: 4
+Tempo: 174,714 ms  (mín 152,804 | máx 212,825 | desvio 24,386)
+Speedup: 1,21
+Eficiência: 120,8%
+
+Threads: 2 | Tarefas: 8
+Tempo: 103,262 ms  (mín 78,874 | máx 108,069 | desvio 8,986)
+Speedup: 2,04
+Eficiência: 102,2%
+
+Threads: 4 | Tarefas: 16
+Tempo: 96,430 ms  (mín 87,769 | máx 112,747 | desvio 8,297)
+Speedup: 2,19
+Eficiência: 54,7%
+
+Threads: 8 | Tarefas: 32
+Tempo: 65,133 ms  (mín 52,871 | máx 73,466 | desvio 6,383)
+Speedup: 3,24
+Eficiência: 40,5%
+
+Threads: 1 | Tarefas: 64
+Tempo: 171,352 ms  (mín 153,309 | máx 208,878 | desvio 23,201)
+Speedup: 1,23
+Eficiência: 123,1%
+
+Threads: 2 | Tarefas: 128
+Tempo: 102,155 ms  (mín 90,564 | máx 111,213 | desvio 6,910)
+Speedup: 2,07
+Eficiência: 103,3%
+
+Threads: 4 | Tarefas: 256
+Tempo: 104,209 ms  (mín 84,102 | máx 109,658 | desvio 8,795)
+Speedup: 2,02
+Eficiência: 50,6%
+
+Threads: 8 | Tarefas: 512
+Tempo: 66,867 ms  (mín 57,227 | máx 70,245 | desvio 5,039)
+Speedup: 3,16
+Eficiência: 39,4%
+
+Threads: 1 | Tarefas: 4096
+Tempo: 224,252 ms  (mín 220,304 | máx 227,256 | desvio 2,203)
+Speedup: 0,94
+Eficiência: 94,1%
+
+Threads: 2 | Tarefas: 8192
+Tempo: 116,189 ms  (mín 105,965 | máx 127,708 | desvio 5,741)
+Speedup: 1,82
+Eficiência: 90,8%
+
+Threads: 4 | Tarefas: 16384
+Tempo: 130,647 ms  (mín 128,109 | máx 136,763 | desvio 2,362)
+Speedup: 1,61
+Eficiência: 40,4%
+
+Threads: 8 | Tarefas: 32768
+Tempo: 94,379 ms  (mín 93,554 | máx 96,331 | desvio 0,843)
+Speedup: 2,24
+Eficiência: 27,9%
+
+Resultado da análise (100.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação      32.002.287    32,0%    R$ 2.947.104.616,58      R$ 92,09    R$ 59.988,36      R$ 5,00
+  Transporte       23.000.522    23,0%      R$ 946.203.328,90      R$ 41,14    R$ 59.996,97      R$ 4,40
+  Eletrônicos      18.997.329    19,0%   R$ 25.764.428.342,63   R$ 1.356,21   R$ 121.494,94      R$ 7,05
+  Saúde            15.001.852    15,0%    R$ 8.249.654.878,66     R$ 549,91    R$ 59.997,11     R$ 10,00
+  Educação         10.998.010    11,0%   R$ 17.940.207.291,68   R$ 1.631,22    R$ 59.956,56    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 594,438 ms  (mín 585,238 | máx 596,376 | desvio 4,812)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 1
+Tempo: 584,687 ms  (mín 583,271 | máx 596,277 | desvio 3,839)
+Speedup: 1,02
+Eficiência: 101,7%
+
+Threads: 2 | Tarefas: 2
+Tempo: 299,821 ms  (mín 293,768 | máx 300,730 | desvio 2,333)
+Speedup: 1,98
+Eficiência: 99,1%
+
+Threads: 4 | Tarefas: 4
+Tempo: 150,870 ms  (mín 149,259 | máx 165,405 | desvio 4,806)
+Speedup: 3,94
+Eficiência: 98,5%
+
+Threads: 8 | Tarefas: 8
+Tempo: 175,989 ms  (mín 174,374 | máx 188,329 | desvio 4,037)
+Speedup: 3,38
+Eficiência: 42,2%
+
+Threads: 1 | Tarefas: 4
+Tempo: 594,429 ms  (mín 592,127 | máx 595,996 | desvio 1,425)
+Speedup: 1,00
+Eficiência: 100,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 299,402 ms  (mín 296,490 | máx 301,035 | desvio 1,226)
+Speedup: 1,99
+Eficiência: 99,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 151,442 ms  (mín 150,662 | máx 155,126 | desvio 1,275)
+Speedup: 3,93
+Eficiência: 98,1%
+
+Threads: 8 | Tarefas: 32
+Tempo: 177,251 ms  (mín 174,797 | máx 180,632 | desvio 1,969)
+Speedup: 3,35
+Eficiência: 41,9%
+
+Threads: 1 | Tarefas: 64
+Tempo: 597,179 ms  (mín 596,395 | máx 597,868 | desvio 0,466)
+Speedup: 1,00
+Eficiência: 99,5%
+
+Threads: 2 | Tarefas: 128
+Tempo: 300,761 ms  (mín 299,862 | máx 302,260 | desvio 0,708)
+Speedup: 1,98
+Eficiência: 98,8%
+
+Threads: 4 | Tarefas: 256
+Tempo: 152,818 ms  (mín 151,700 | máx 167,757 | desvio 4,806)
+Speedup: 3,89
+Eficiência: 97,2%
+
+Threads: 8 | Tarefas: 512
+Tempo: 178,576 ms  (mín 177,164 | máx 181,862 | desvio 1,327)
+Speedup: 3,33
+Eficiência: 41,6%
+
+Threads: 1 | Tarefas: 4096
+Tempo: 607,129 ms  (mín 605,132 | máx 609,474 | desvio 1,378)
+Speedup: 0,98
+Eficiência: 97,9%
+
+Threads: 2 | Tarefas: 8192
+Tempo: 308,812 ms  (mín 307,680 | máx 310,541 | desvio 0,795)
+Speedup: 1,92
+Eficiência: 96,2%
+
+Threads: 4 | Tarefas: 16384
+Tempo: 163,618 ms  (mín 159,920 | máx 179,193 | desvio 7,820)
+Speedup: 3,63
+Eficiência: 90,8%
+
+Threads: 8 | Tarefas: 32768
+Tempo: 200,622 ms  (mín 196,962 | máx 201,722 | desvio 1,645)
+Speedup: 2,96
+Eficiência: 37,0%
+
+Resultado da análise (100.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                22.187.150    22,19%      R$ 542.819.211,94
+  R$ 50 a 100              25.535.065    25,54%    R$ 1.943.638.140,90
+  R$ 100 a 500             24.426.087    24,43%    R$ 4.319.809.483,41
+  R$ 500 a 1 mil            7.793.577     7,79%    R$ 5.748.465.007,64
+  R$ 1 mil a 5 mil         19.498.786    19,50%   R$ 38.571.953.142,10
+  R$ 5 mil a 10 mil           469.427     0,47%    R$ 3.074.815.500,49
+  acima de R$ 10 mil           89.908     0,09%    R$ 1.646.097.971,97
+  Média: R$ 558,48 | Desvio padrão: R$ 1.115,44
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1184,863 ms  (mín 1169,716 | máx 1193,372 | desvio 9,090)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 1
+Tempo: 1188,616 ms  (mín 1166,925 | máx 1193,287 | desvio 8,930)
+Speedup: 1,00
+Eficiência: 99,7%
+
+Threads: 2 | Tarefas: 2
+Tempo: 596,517 ms  (mín 589,311 | máx 609,042 | desvio 5,259)
+Speedup: 1,99
+Eficiência: 99,3%
+
+Threads: 4 | Tarefas: 4
+Tempo: 631,020 ms  (mín 313,961 | máx 652,148 | desvio 101,725)
+Speedup: 1,88
+Eficiência: 46,9%
+
+Threads: 8 | Tarefas: 8
+Tempo: 366,775 ms  (mín 364,266 | máx 368,586 | desvio 1,396)
+Speedup: 3,23
+Eficiência: 40,4%
+
+Threads: 1 | Tarefas: 4
+Tempo: 1183,886 ms  (mín 1166,705 | máx 1237,082 | desvio 19,267)
+Speedup: 1,00
+Eficiência: 100,1%
+
+Threads: 2 | Tarefas: 8
+Tempo: 594,829 ms  (mín 589,184 | máx 599,538 | desvio 3,346)
+Speedup: 1,99
+Eficiência: 99,6%
+
+Threads: 4 | Tarefas: 16
+Tempo: 622,378 ms  (mín 314,380 | máx 641,173 | desvio 98,971)
+Speedup: 1,90
+Eficiência: 47,6%
+
+Threads: 8 | Tarefas: 32
+Tempo: 366,987 ms  (mín 363,911 | máx 372,669 | desvio 2,777)
+Speedup: 3,23
+Eficiência: 40,4%
+
+Threads: 1 | Tarefas: 64
+Tempo: 1170,282 ms  (mín 1164,824 | máx 1255,713 | desvio 27,369)
+Speedup: 1,01
+Eficiência: 101,2%
+
+Threads: 2 | Tarefas: 128
+Tempo: 590,996 ms  (mín 588,955 | máx 617,636 | desvio 9,620)
+Speedup: 2,00
+Eficiência: 100,2%
+
+Threads: 4 | Tarefas: 256
+Tempo: 614,382 ms  (mín 306,265 | máx 628,792 | desvio 155,004)
+Speedup: 1,93
+Eficiência: 48,2%
+
+Threads: 8 | Tarefas: 512
+Tempo: 363,996 ms  (mín 362,121 | máx 368,519 | desvio 2,051)
+Speedup: 3,26
+Eficiência: 40,7%
+
+Threads: 1 | Tarefas: 4096
+Tempo: 1185,398 ms  (mín 1182,174 | máx 1189,102 | desvio 2,286)
+Speedup: 1,00
+Eficiência: 100,0%
+
+Threads: 2 | Tarefas: 8192
+Tempo: 606,828 ms  (mín 604,009 | máx 650,647 | desvio 13,937)
+Speedup: 1,95
+Eficiência: 97,6%
+
+Threads: 4 | Tarefas: 16384
+Tempo: 668,160 ms  (mín 652,261 | máx 681,423 | desvio 7,613)
+Speedup: 1,77
+Eficiência: 44,3%
+
+Threads: 8 | Tarefas: 32768
+Tempo: 410,708 ms  (mín 401,669 | máx 427,908 | desvio 9,468)
+Speedup: 2,88
+Eficiência: 36,1%
+
+Resultado da análise (100.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 55.847.598.458,45 | Suspeitas: 558.723 | Desvio padrão: R$ 1.115,44
+
+
+Resumo salvo em:  C:\ppd\Projeto_Transacoes_Paralelas\resultados\tarefas\tarefas.csv
+Tempos de cada repetição: C:\ppd\Projeto_Transacoes_Paralelas\resultados\tarefas\tarefas_bruto.csv
+Saída do console: C:\ppd\Projeto_Transacoes_Paralelas\resultados\tarefas\tarefas_console.txt
+Gráficos: rode  py gerar_graficos.py  (Windows) ou  python3 gerar_graficos.py  (Linux).
