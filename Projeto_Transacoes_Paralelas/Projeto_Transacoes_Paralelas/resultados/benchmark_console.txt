@@ -1,0 +1,2945 @@
+==============================================================
+ ANÁLISE PARALELA DE TRANSAÇÕES FINANCEIRAS
+==============================================================
+Data: 18/10/2026 19:01
+Sistema: Windows 11 10.0 (amd64)
+Processador: AMD Ryzen 7 5700U with Radeon Graphics
+CPUs lógicas: 16 | Memória máxima do Java: 4,0 GB | Java 21.0.12.1
+Volumes: 100.000, 1.000.000, 10.000.000, 50.000.000, 100.000.000, 250.000.000, 500.000.000 | Threads: 1,2,4,8 | Tarefas por thread: 4 | Repetições: 10
+Análises: agregacao, suspeitas, categorias, faixas, completa | Modos: Sequencial, Executor, Executor+Affinity, Executor+Affinity-nucleo
+
+Gerando 500.000.000 transações (uma vez, em paralelo, fora das medições)...
+Dados prontos em 3,3 s (2,3 GB na memória).
+
+CPUs lógicas permitidas para o processo: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+Afinidade: disponível (OpenHFT); a conferência pergunta ao sistema operacional em que CPU cada thread roda
+Núcleos físicos: 8 núcleos físicos, 16 CPUs lógicas (até 2 por núcleo: hyperthreading)
+CPUs do modo "1 thread por núcleo físico": 0,2,4,6,8,10,12,14
+
+Verificação da afinidade (CPU em que cada thread realmente rodou, segundo o sistema operacional):
+  Executor+Affinity           1 thread  | pedidas: 0                | OK: observadas 0
+  Executor+Affinity-nucleo    1 thread  | pedidas: 0                | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+  Executor+Affinity           2 threads | pedidas: 0,1              | OK: observadas 0,1
+  Executor+Affinity-nucleo    2 threads | pedidas: 0,2              | OK: observadas 0,2
+  Executor+Affinity           4 threads | pedidas: 0,1,2,3          | OK: observadas 0,1,2,3
+  Executor+Affinity-nucleo    4 threads | pedidas: 0,2,4,6          | OK: observadas 0,2,4,6
+  Executor+Affinity           8 threads | pedidas: 0,1,2,3,4,5,6,7  | OK: observadas 0,1,2,3,4,5,6,7
+  Executor+Affinity-nucleo    8 threads | pedidas: 0,2,4,6,8,10,12,14 | OK: observadas 0,2,4,6,8,10,12,14
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 100.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 0,083 ms  (mín 0,076 | máx 0,105 | desvio 0,009)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 0,135 ms  (mín 0,118 | máx 0,231 | desvio 0,035)
+Speedup: 0,62
+Eficiência: 61,8%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,106 ms  (mín 0,088 | máx 0,162 | desvio 0,021)
+Speedup: 0,79
+Eficiência: 39,5%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,110 ms  (mín 0,078 | máx 0,187 | desvio 0,037)
+Speedup: 0,76
+Eficiência: 18,9%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,146 ms  (mín 0,110 | máx 0,182 | desvio 0,032)
+Speedup: 0,57
+Eficiência: 7,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 0,126 ms  (mín 0,114 | máx 0,479 | desvio 0,119)
+Speedup: 0,66
+Eficiência: 66,1%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,159 ms  (mín 0,119 | máx 0,512 | desvio 0,120)
+Speedup: 0,52
+Eficiência: 26,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,136 ms  (mín 0,095 | máx 9,224 | desvio 2,871)
+Speedup: 0,61
+Eficiência: 15,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,166 ms  (mín 0,114 | máx 0,818 | desvio 0,213)
+Speedup: 0,50
+Eficiência: 6,3%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,109 ms  (mín 0,073 | máx 0,508 | desvio 0,135)
+Speedup: 0,76
+Eficiência: 38,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,108 ms  (mín 0,072 | máx 0,251 | desvio 0,055)
+Speedup: 0,77
+Eficiência: 19,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,164 ms  (mín 0,108 | máx 0,290 | desvio 0,062)
+Speedup: 0,51
+Eficiência: 6,3%
+
+Resultado da análise (100.000 transações):
+  Quantidade: 100.000
+  Soma: R$ 56.106.648,56
+  Média: R$ 561,07
+  Maior transação: R$ 56.108,72 (ID 57436)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 100.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 0,359 ms  (mín 0,321 | máx 0,721 | desvio 0,120)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 0,398 ms  (mín 0,368 | máx 0,724 | desvio 0,107)
+Speedup: 0,90
+Eficiência: 90,3%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,269 ms  (mín 0,223 | máx 0,366 | desvio 0,049)
+Speedup: 1,34
+Eficiência: 66,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,174 ms  (mín 0,153 | máx 0,212 | desvio 0,018)
+Speedup: 2,06
+Eficiência: 51,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,196 ms  (mín 0,182 | máx 0,275 | desvio 0,031)
+Speedup: 1,83
+Eficiência: 22,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 0,410 ms  (mín 0,356 | máx 0,771 | desvio 0,134)
+Speedup: 0,88
+Eficiência: 87,6%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,278 ms  (mín 0,257 | máx 0,559 | desvio 0,093)
+Speedup: 1,29
+Eficiência: 64,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,211 ms  (mín 0,184 | máx 0,500 | desvio 0,093)
+Speedup: 1,70
+Eficiência: 42,6%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,209 ms  (mín 0,155 | máx 12,169 | desvio 3,964)
+Speedup: 1,71
+Eficiência: 21,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,246 ms  (mín 0,225 | máx 0,473 | desvio 0,095)
+Speedup: 1,46
+Eficiência: 72,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,195 ms  (mín 0,154 | máx 0,815 | desvio 0,199)
+Speedup: 1,84
+Eficiência: 46,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,358 ms  (mín 0,193 | máx 83,688 | desvio 26,344)
+Speedup: 1,00
+Eficiência: 12,5%
+
+Resultado da análise (100.000 transações):
+  Regra 1 (valor > R$ 10.000): 105 (0,105%)
+  Regra 2 (Eletrônicos > R$ 5.000): 572 (0,572%)
+  Suspeitas (sem repetir): 591 (0,591%) | valor total: R$ 5.085.113,92
+  10 maiores suspeitas:
+     1. ID 57.436           R$ 56.108,72  Eletrônicos
+     2. ID 64.024           R$ 55.711,95  Eletrônicos
+     3. ID 40.767           R$ 55.590,96  Alimentação
+     4. ID 22.711           R$ 52.976,48  Educação
+     5. ID 25.137           R$ 49.122,52  Alimentação
+     6. ID 23.830           R$ 47.733,77  Saúde
+     7. ID 15.915           R$ 43.622,97  Alimentação
+     8. ID 98.672           R$ 41.622,45  Eletrônicos
+     9. ID 42.677           R$ 41.575,91  Transporte
+    10. ID 85.422           R$ 36.868,92  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 100.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 0,178 ms  (mín 0,119 | máx 0,321 | desvio 0,058)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 0,213 ms  (mín 0,152 | máx 0,336 | desvio 0,055)
+Speedup: 0,84
+Eficiência: 83,7%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,144 ms  (mín 0,114 | máx 0,255 | desvio 0,049)
+Speedup: 1,24
+Eficiência: 61,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,129 ms  (mín 0,100 | máx 0,207 | desvio 0,036)
+Speedup: 1,39
+Eficiência: 34,7%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,162 ms  (mín 0,115 | máx 0,202 | desvio 0,031)
+Speedup: 1,10
+Eficiência: 13,7%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 0,196 ms  (mín 0,149 | máx 0,772 | desvio 0,188)
+Speedup: 0,91
+Eficiência: 91,2%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,198 ms  (mín 0,167 | máx 0,324 | desvio 0,051)
+Speedup: 0,90
+Eficiência: 45,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,205 ms  (mín 0,157 | máx 0,418 | desvio 0,075)
+Speedup: 0,87
+Eficiência: 21,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,176 ms  (mín 0,134 | máx 5,776 | desvio 1,772)
+Speedup: 1,02
+Eficiência: 12,7%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,142 ms  (mín 0,098 | máx 1,735 | desvio 0,504)
+Speedup: 1,26
+Eficiência: 62,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,139 ms  (mín 0,109 | máx 0,278 | desvio 0,049)
+Speedup: 1,29
+Eficiência: 32,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,163 ms  (mín 0,117 | máx 0,199 | desvio 0,024)
+Speedup: 1,10
+Eficiência: 13,7%
+
+Resultado da análise (100.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação          31.981    32,0%        R$ 2.963.890,00      R$ 92,68    R$ 55.590,96      R$ 5,12
+  Transporte           22.913    22,9%          R$ 927.193,99      R$ 40,47    R$ 41.575,91      R$ 4,40
+  Eletrônicos          18.915    18,9%       R$ 25.861.026,05   R$ 1.367,22    R$ 56.108,72     R$ 23,93
+  Saúde                15.155    15,2%        R$ 8.383.166,44     R$ 553,16    R$ 47.733,77     R$ 10,04
+  Educação             11.036    11,0%       R$ 17.971.372,08   R$ 1.628,43    R$ 52.976,48    R$ 250,67
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 100.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 0,601 ms  (mín 0,588 | máx 1,333 | desvio 0,232)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 0,675 ms  (mín 0,632 | máx 1,393 | desvio 0,239)
+Speedup: 0,89
+Eficiência: 89,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,374 ms  (mín 0,357 | máx 0,522 | desvio 0,065)
+Speedup: 1,61
+Eficiência: 80,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,298 ms  (mín 0,243 | máx 0,378 | desvio 0,044)
+Speedup: 2,02
+Eficiência: 50,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,247 ms  (mín 0,220 | máx 0,377 | desvio 0,045)
+Speedup: 2,43
+Eficiência: 30,4%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 0,665 ms  (mín 0,659 | máx 1,062 | desvio 0,126)
+Speedup: 0,90
+Eficiência: 90,3%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,434 ms  (mín 0,417 | máx 0,914 | desvio 0,152)
+Speedup: 1,38
+Eficiência: 69,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,289 ms  (mín 0,264 | máx 0,469 | desvio 0,064)
+Speedup: 2,08
+Eficiência: 52,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,264 ms  (mín 0,217 | máx 0,380 | desvio 0,049)
+Speedup: 2,27
+Eficiência: 28,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,385 ms  (mín 0,361 | máx 0,448 | desvio 0,023)
+Speedup: 1,56
+Eficiência: 78,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,301 ms  (mín 0,218 | máx 0,373 | desvio 0,047)
+Speedup: 1,99
+Eficiência: 49,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,302 ms  (mín 0,219 | máx 0,776 | desvio 0,166)
+Speedup: 1,99
+Eficiência: 24,9%
+
+Resultado da análise (100.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                    22.045    22,05%          R$ 539.928,30
+  R$ 50 a 100                  25.568    25,57%        R$ 1.947.788,99
+  R$ 100 a 500                 24.622    24,62%        R$ 4.368.019,53
+  R$ 500 a 1 mil                7.721     7,72%        R$ 5.670.278,54
+  R$ 1 mil a 5 mil             19.453    19,45%       R$ 38.495.519,28
+  R$ 5 mil a 10 mil               486     0,49%        R$ 3.185.150,20
+  acima de R$ 10 mil              105     0,11%        R$ 1.899.963,72
+  Média: R$ 561,07 | Desvio padrão: R$ 1.140,70
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 100.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1,147 ms  (mín 1,106 | máx 2,327 | desvio 0,481)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1,451 ms  (mín 1,144 | máx 2,030 | desvio 0,366)
+Speedup: 0,79
+Eficiência: 79,1%
+
+Threads: 2 | Tarefas: 8
+Tempo: 1,084 ms  (mín 0,635 | máx 1,428 | desvio 0,270)
+Speedup: 1,06
+Eficiência: 52,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,470 ms  (mín 0,417 | máx 0,567 | desvio 0,054)
+Speedup: 2,44
+Eficiência: 60,9%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,405 ms  (mín 0,288 | máx 0,549 | desvio 0,071)
+Speedup: 2,83
+Eficiência: 35,4%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1,176 ms  (mín 1,151 | máx 2,139 | desvio 0,333)
+Speedup: 0,97
+Eficiência: 97,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,829 ms  (mín 0,765 | máx 1,583 | desvio 0,261)
+Speedup: 1,38
+Eficiência: 69,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,485 ms  (mín 0,446 | máx 0,682 | desvio 0,080)
+Speedup: 2,37
+Eficiência: 59,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,433 ms  (mín 0,363 | máx 7,189 | desvio 2,138)
+Speedup: 2,65
+Eficiência: 33,1%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 1,012 ms  (mín 0,604 | máx 1,218 | desvio 0,234)
+Speedup: 1,13
+Eficiência: 56,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,417 ms  (mín 0,355 | máx 0,624 | desvio 0,083)
+Speedup: 2,75
+Eficiência: 68,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,346 ms  (mín 0,272 | máx 0,711 | desvio 0,142)
+Speedup: 3,32
+Eficiência: 41,5%
+
+Resultado da análise (100.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 56.106.648,56 | Suspeitas: 591 | Desvio padrão: R$ 1.140,70
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 1.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 0,708 ms  (mín 0,699 | máx 1,275 | desvio 0,179)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 0,758 ms  (mín 0,731 | máx 1,394 | desvio 0,202)
+Speedup: 0,93
+Eficiência: 93,3%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,507 ms  (mín 0,393 | máx 0,673 | desvio 0,091)
+Speedup: 1,40
+Eficiência: 69,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,302 ms  (mín 0,255 | máx 0,486 | desvio 0,068)
+Speedup: 2,34
+Eficiência: 58,5%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,295 ms  (mín 0,231 | máx 0,413 | desvio 0,069)
+Speedup: 2,40
+Eficiência: 30,0%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 0,760 ms  (mín 0,744 | máx 0,983 | desvio 0,094)
+Speedup: 0,93
+Eficiência: 93,1%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 0,647 ms  (mín 0,624 | máx 0,847 | desvio 0,068)
+Speedup: 1,09
+Eficiência: 54,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,494 ms  (mín 0,389 | máx 0,634 | desvio 0,083)
+Speedup: 1,43
+Eficiência: 35,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,359 ms  (mín 0,266 | máx 0,541 | desvio 0,084)
+Speedup: 1,97
+Eficiência: 24,7%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,433 ms  (mín 0,407 | máx 0,601 | desvio 0,065)
+Speedup: 1,64
+Eficiência: 81,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,393 ms  (mín 0,297 | máx 0,494 | desvio 0,072)
+Speedup: 1,80
+Eficiência: 45,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,336 ms  (mín 0,250 | máx 0,494 | desvio 0,071)
+Speedup: 2,11
+Eficiência: 26,3%
+
+Resultado da análise (1.000.000 transações):
+  Quantidade: 1.000.000
+  Soma: R$ 559.726.612,49
+  Média: R$ 559,73
+  Maior transação: R$ 62.169,64 (ID 769505)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 1.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 3,227 ms  (mín 3,181 | máx 3,907 | desvio 0,231)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 3,935 ms  (mín 3,294 | máx 8,268 | desvio 1,451)
+Speedup: 0,82
+Eficiência: 82,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 2,246 ms  (mín 1,696 | máx 2,522 | desvio 0,275)
+Speedup: 1,44
+Eficiência: 71,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 1,508 ms  (mín 0,923 | máx 1,935 | desvio 0,346)
+Speedup: 2,14
+Eficiência: 53,5%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,839 ms  (mín 0,680 | máx 5,402 | desvio 1,448)
+Speedup: 3,85
+Eficiência: 48,1%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 3,305 ms  (mín 3,238 | máx 4,016 | desvio 0,319)
+Speedup: 0,98
+Eficiência: 97,6%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 2,183 ms  (mín 1,946 | máx 3,929 | desvio 0,666)
+Speedup: 1,48
+Eficiência: 73,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 1,183 ms  (mín 1,042 | máx 8,866 | desvio 2,422)
+Speedup: 2,73
+Eficiência: 68,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,973 ms  (mín 0,666 | máx 1,825 | desvio 0,436)
+Speedup: 3,31
+Eficiência: 41,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 2,302 ms  (mín 1,659 | máx 6,912 | desvio 1,514)
+Speedup: 1,40
+Eficiência: 70,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 1,312 ms  (mín 0,931 | máx 1,873 | desvio 0,345)
+Speedup: 2,46
+Eficiência: 61,5%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,845 ms  (mín 0,665 | máx 2,666 | desvio 0,600)
+Speedup: 3,82
+Eficiência: 47,8%
+
+Resultado da análise (1.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 931 (0,093%)
+  Regra 2 (Eletrônicos > R$ 5.000): 5.595 (0,560%)
+  Suspeitas (sem repetir): 5.771 (0,577%) | valor total: R$ 49.242.546,25
+  10 maiores suspeitas:
+     1. ID 769.505          R$ 62.169,64  Eletrônicos
+     2. ID 210.927          R$ 59.933,11  Transporte
+     3. ID 441.770          R$ 59.924,56  Saúde
+     4. ID 712.358          R$ 59.609,64  Alimentação
+     5. ID 828.123          R$ 59.565,97  Alimentação
+     6. ID 224.084          R$ 59.049,78  Transporte
+     7. ID 114.946          R$ 58.874,95  Educação
+     8. ID 563.082          R$ 58.690,93  Transporte
+     9. ID 620.459          R$ 57.917,38  Alimentação
+    10. ID 478.205          R$ 57.494,07  Transporte
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 1.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1,210 ms  (mín 1,183 | máx 1,602 | desvio 0,127)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1,280 ms  (mín 1,247 | máx 1,801 | desvio 0,198)
+Speedup: 0,95
+Eficiência: 94,5%
+
+Threads: 2 | Tarefas: 8
+Tempo: 0,991 ms  (mín 0,651 | máx 1,389 | desvio 0,233)
+Speedup: 1,22
+Eficiência: 61,1%
+
+Threads: 4 | Tarefas: 16
+Tempo: 0,518 ms  (mín 0,409 | máx 0,834 | desvio 0,134)
+Speedup: 2,34
+Eficiência: 58,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 0,405 ms  (mín 0,319 | máx 0,498 | desvio 0,057)
+Speedup: 2,99
+Eficiência: 37,3%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1,262 ms  (mín 1,246 | máx 2,277 | desvio 0,357)
+Speedup: 0,96
+Eficiência: 95,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 1,210 ms  (mín 1,178 | máx 2,080 | desvio 0,278)
+Speedup: 1,00
+Eficiência: 50,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 0,939 ms  (mín 0,667 | máx 1,079 | desvio 0,151)
+Speedup: 1,29
+Eficiência: 32,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 0,631 ms  (mín 0,499 | máx 0,782 | desvio 0,092)
+Speedup: 1,92
+Eficiência: 24,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 0,789 ms  (mín 0,650 | máx 1,081 | desvio 0,146)
+Speedup: 1,53
+Eficiência: 76,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 0,507 ms  (mín 0,417 | máx 0,644 | desvio 0,070)
+Speedup: 2,39
+Eficiência: 59,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 0,405 ms  (mín 0,335 | máx 0,489 | desvio 0,051)
+Speedup: 2,98
+Eficiência: 37,3%
+
+Resultado da análise (1.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação         321.146    32,1%       R$ 29.576.667,13      R$ 92,10    R$ 59.609,64      R$ 5,00
+  Transporte          229.834    23,0%        R$ 9.708.954,51      R$ 42,24    R$ 59.933,11      R$ 4,40
+  Eletrônicos         189.372    18,9%      R$ 258.326.558,35   R$ 1.364,12    R$ 62.169,64     R$ 17,85
+  Saúde               149.746    15,0%       R$ 82.889.522,23     R$ 553,53    R$ 59.924,56     R$ 10,02
+  Educação            109.902    11,0%      R$ 179.224.910,27   R$ 1.630,77    R$ 58.874,95    R$ 250,03
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 1.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 6,266 ms  (mín 5,893 | máx 17,817 | desvio 3,668)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 6,875 ms  (mín 6,085 | máx 19,428 | desvio 4,066)
+Speedup: 0,91
+Eficiência: 91,1%
+
+Threads: 2 | Tarefas: 8
+Tempo: 4,172 ms  (mín 3,133 | máx 8,031 | desvio 1,480)
+Speedup: 1,50
+Eficiência: 75,1%
+
+Threads: 4 | Tarefas: 16
+Tempo: 2,384 ms  (mín 1,612 | máx 10,927 | desvio 2,783)
+Speedup: 2,63
+Eficiência: 65,7%
+
+Threads: 8 | Tarefas: 32
+Tempo: 2,226 ms  (mín 1,016 | máx 7,730 | desvio 1,966)
+Speedup: 2,81
+Eficiência: 35,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 6,080 ms  (mín 5,989 | máx 20,053 | desvio 6,229)
+Speedup: 1,03
+Eficiência: 103,0%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 3,716 ms  (mín 3,567 | máx 15,070 | desvio 3,586)
+Speedup: 1,69
+Eficiência: 84,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 2,350 ms  (mín 1,933 | máx 3,518 | desvio 0,622)
+Speedup: 2,67
+Eficiência: 66,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 1,595 ms  (mín 1,122 | máx 18,261 | desvio 5,279)
+Speedup: 3,93
+Eficiência: 49,1%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 3,499 ms  (mín 3,034 | máx 4,412 | desvio 0,422)
+Speedup: 1,79
+Eficiência: 89,5%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 2,680 ms  (mín 1,720 | máx 9,430 | desvio 2,191)
+Speedup: 2,34
+Eficiência: 58,4%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 1,676 ms  (mín 1,025 | máx 4,103 | desvio 0,823)
+Speedup: 3,74
+Eficiência: 46,7%
+
+Resultado da análise (1.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                   221.670    22,17%        R$ 5.438.122,63
+  R$ 50 a 100                 256.573    25,66%       R$ 19.525.902,53
+  R$ 100 a 500                243.590    24,36%       R$ 43.091.221,53
+  R$ 500 a 1 mil               78.030     7,80%       R$ 57.548.788,19
+  R$ 1 mil a 5 mil            194.363    19,44%      R$ 384.852.480,08
+  R$ 5 mil a 10 mil             4.843     0,48%       R$ 31.729.091,66
+  acima de R$ 10 mil              931     0,09%       R$ 17.541.005,87
+  Média: R$ 559,73 | Desvio padrão: R$ 1.135,46
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 1.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 11,342 ms  (mín 11,167 | máx 20,264 | desvio 2,812)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 13,057 ms  (mín 11,362 | máx 28,109 | desvio 5,285)
+Speedup: 0,87
+Eficiência: 86,9%
+
+Threads: 2 | Tarefas: 8
+Tempo: 6,423 ms  (mín 6,107 | máx 8,514 | desvio 0,757)
+Speedup: 1,77
+Eficiência: 88,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 4,085 ms  (mín 2,940 | máx 9,016 | desvio 1,980)
+Speedup: 2,78
+Eficiência: 69,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 8,886 ms  (mín 2,835 | máx 10,534 | desvio 3,095)
+Speedup: 1,28
+Eficiência: 16,0%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 12,197 ms  (mín 11,249 | máx 26,106 | desvio 4,923)
+Speedup: 0,93
+Eficiência: 93,0%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 8,958 ms  (mín 7,275 | máx 15,501 | desvio 3,023)
+Speedup: 1,27
+Eficiência: 63,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 4,730 ms  (mín 4,035 | máx 9,622 | desvio 1,592)
+Speedup: 2,40
+Eficiência: 59,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 5,130 ms  (mín 2,585 | máx 9,966 | desvio 2,835)
+Speedup: 2,21
+Eficiência: 27,6%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 6,403 ms  (mín 5,739 | máx 20,650 | desvio 5,756)
+Speedup: 1,77
+Eficiência: 88,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 8,269 ms  (mín 3,558 | máx 9,933 | desvio 2,629)
+Speedup: 1,37
+Eficiência: 34,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 9,234 ms  (mín 2,700 | máx 11,043 | desvio 2,304)
+Speedup: 1,23
+Eficiência: 15,4%
+
+Resultado da análise (1.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 559.726.612,49 | Suspeitas: 5.771 | Desvio padrão: R$ 1.135,46
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 10.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 7,430 ms  (mín 7,266 | máx 15,559 | desvio 2,980)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 7,917 ms  (mín 7,359 | máx 10,346 | desvio 0,930)
+Speedup: 0,94
+Eficiência: 93,8%
+
+Threads: 2 | Tarefas: 8
+Tempo: 4,625 ms  (mín 3,842 | máx 14,068 | desvio 3,672)
+Speedup: 1,61
+Eficiência: 80,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 3,252 ms  (mín 2,028 | máx 9,647 | desvio 2,220)
+Speedup: 2,28
+Eficiência: 57,1%
+
+Threads: 8 | Tarefas: 32
+Tempo: 4,512 ms  (mín 2,450 | máx 7,846 | desvio 2,080)
+Speedup: 1,65
+Eficiência: 20,6%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 8,718 ms  (mín 7,407 | máx 16,531 | desvio 2,724)
+Speedup: 0,85
+Eficiência: 85,2%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 6,190 ms  (mín 5,903 | máx 9,951 | desvio 1,303)
+Speedup: 1,20
+Eficiência: 60,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 4,186 ms  (mín 3,063 | máx 14,506 | desvio 4,683)
+Speedup: 1,77
+Eficiência: 44,4%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 2,443 ms  (mín 2,010 | máx 7,652 | desvio 1,977)
+Speedup: 3,04
+Eficiência: 38,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 4,740 ms  (mín 4,020 | máx 5,873 | desvio 0,497)
+Speedup: 1,57
+Eficiência: 78,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 4,803 ms  (mín 2,369 | máx 12,750 | desvio 4,068)
+Speedup: 1,55
+Eficiência: 38,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 3,476 ms  (mín 1,959 | máx 5,435 | desvio 1,351)
+Speedup: 2,14
+Eficiência: 26,7%
+
+Resultado da análise (10.000.000 transações):
+  Quantidade: 10.000.000
+  Soma: R$ 5.584.957.557,38
+  Média: R$ 558,50
+  Maior transação: R$ 79.415,35 (ID 4997030)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 10.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 32,947 ms  (mín 31,809 | máx 34,825 | desvio 1,332)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 33,084 ms  (mín 31,978 | máx 34,272 | desvio 0,734)
+Speedup: 1,00
+Eficiência: 99,6%
+
+Threads: 2 | Tarefas: 8
+Tempo: 16,831 ms  (mín 16,637 | máx 22,666 | desvio 2,025)
+Speedup: 1,96
+Eficiência: 97,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 10,650 ms  (mín 8,208 | máx 21,843 | desvio 4,431)
+Speedup: 3,09
+Eficiência: 77,3%
+
+Threads: 8 | Tarefas: 32
+Tempo: 17,134 ms  (mín 6,454 | máx 18,876 | desvio 5,246)
+Speedup: 1,92
+Eficiência: 24,0%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 33,449 ms  (mín 32,105 | máx 36,312 | desvio 1,433)
+Speedup: 0,99
+Eficiência: 98,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 19,710 ms  (mín 19,006 | máx 24,855 | desvio 2,044)
+Speedup: 1,67
+Eficiência: 83,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 10,756 ms  (mín 9,607 | máx 13,070 | desvio 1,129)
+Speedup: 3,06
+Eficiência: 76,6%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 17,980 ms  (mín 15,975 | máx 19,899 | desvio 1,077)
+Speedup: 1,83
+Eficiência: 22,9%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 16,389 ms  (mín 16,169 | máx 18,606 | desvio 0,903)
+Speedup: 2,01
+Eficiência: 100,5%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 9,166 ms  (mín 8,249 | máx 24,155 | desvio 4,806)
+Speedup: 3,59
+Eficiência: 89,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 17,217 ms  (mín 16,796 | máx 20,067 | desvio 0,958)
+Speedup: 1,91
+Eficiência: 23,9%
+
+Resultado da análise (10.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 8.861 (0,089%)
+  Regra 2 (Eletrônicos > R$ 5.000): 54.295 (0,543%)
+  Suspeitas (sem repetir): 55.841 (0,558%) | valor total: R$ 471.003.384,85
+  10 maiores suspeitas:
+     1. ID 4.997.030        R$ 79.415,35  Eletrônicos
+     2. ID 1.697.558        R$ 64.933,85  Eletrônicos
+     3. ID 769.505          R$ 62.169,64  Eletrônicos
+     4. ID 9.918.166        R$ 59.996,16  Transporte
+     5. ID 9.656.900        R$ 59.975,12  Transporte
+     6. ID 210.927          R$ 59.933,11  Transporte
+     7. ID 441.770          R$ 59.924,56  Saúde
+     8. ID 2.752.896        R$ 59.893,67  Educação
+     9. ID 8.936.519        R$ 59.879,37  Alimentação
+    10. ID 5.094.205        R$ 59.847,45  Alimentação
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 10.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 18,366 ms  (mín 12,160 | máx 25,076 | desvio 4,053)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 18,263 ms  (mín 13,043 | máx 23,902 | desvio 3,829)
+Speedup: 1,01
+Eficiência: 100,6%
+
+Threads: 2 | Tarefas: 8
+Tempo: 10,317 ms  (mín 6,585 | máx 19,798 | desvio 4,299)
+Speedup: 1,78
+Eficiência: 89,0%
+
+Threads: 4 | Tarefas: 16
+Tempo: 13,207 ms  (mín 5,321 | máx 15,121 | desvio 3,876)
+Speedup: 1,39
+Eficiência: 34,8%
+
+Threads: 8 | Tarefas: 32
+Tempo: 11,371 ms  (mín 2,872 | máx 15,614 | desvio 4,254)
+Speedup: 1,62
+Eficiência: 20,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 17,329 ms  (mín 12,173 | máx 21,705 | desvio 2,874)
+Speedup: 1,06
+Eficiência: 106,0%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 15,490 ms  (mín 11,496 | máx 22,904 | desvio 4,038)
+Speedup: 1,19
+Eficiência: 59,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 8,059 ms  (mín 6,267 | máx 10,895 | desvio 1,289)
+Speedup: 2,28
+Eficiência: 57,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 13,012 ms  (mín 9,411 | máx 17,010 | desvio 2,773)
+Speedup: 1,41
+Eficiência: 17,6%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 10,207 ms  (mín 6,974 | máx 12,390 | desvio 1,626)
+Speedup: 1,80
+Eficiência: 90,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 11,283 ms  (mín 5,889 | máx 16,035 | desvio 3,757)
+Speedup: 1,63
+Eficiência: 40,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 10,487 ms  (mín 3,068 | máx 13,599 | desvio 3,927)
+Speedup: 1,75
+Eficiência: 21,9%
+
+Resultado da análise (10.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação       3.198.458    32,0%      R$ 295.570.715,02      R$ 92,41    R$ 59.879,37      R$ 5,00
+  Transporte        2.301.146    23,0%       R$ 93.677.144,83      R$ 40,71    R$ 59.996,16      R$ 4,40
+  Eletrônicos       1.898.531    19,0%    R$ 2.574.133.707,60   R$ 1.355,86    R$ 79.415,35     R$ 11,01
+  Saúde             1.501.956    15,0%      R$ 827.907.945,47     R$ 551,22    R$ 59.924,56     R$ 10,00
+  Educação          1.099.909    11,0%    R$ 1.793.668.044,46   R$ 1.630,74    R$ 59.893,67    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 10.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 59,382 ms  (mín 58,590 | máx 59,929 | desvio 0,332)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 60,378 ms  (mín 59,855 | máx 61,127 | desvio 0,457)
+Speedup: 0,98
+Eficiência: 98,4%
+
+Threads: 2 | Tarefas: 8
+Tempo: 30,737 ms  (mín 30,206 | máx 44,829 | desvio 4,484)
+Speedup: 1,93
+Eficiência: 96,6%
+
+Threads: 4 | Tarefas: 16
+Tempo: 16,061 ms  (mín 15,431 | máx 27,610 | desvio 3,692)
+Speedup: 3,70
+Eficiência: 92,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 22,688 ms  (mín 22,415 | máx 25,248 | desvio 0,948)
+Speedup: 2,62
+Eficiência: 32,7%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 60,508 ms  (mín 59,507 | máx 110,079 | desvio 15,732)
+Speedup: 0,98
+Eficiência: 98,1%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 37,221 ms  (mín 35,832 | máx 41,181 | desvio 1,531)
+Speedup: 1,60
+Eficiência: 79,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 19,003 ms  (mín 18,215 | máx 19,675 | desvio 0,475)
+Speedup: 3,12
+Eficiência: 78,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 23,648 ms  (mín 20,769 | máx 25,291 | desvio 1,272)
+Speedup: 2,51
+Eficiência: 31,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 30,644 ms  (mín 29,864 | máx 32,011 | desvio 0,615)
+Speedup: 1,94
+Eficiência: 96,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 15,807 ms  (mín 15,453 | máx 30,860 | desvio 6,270)
+Speedup: 3,76
+Eficiência: 93,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 22,799 ms  (mín 11,701 | máx 25,057 | desvio 3,956)
+Speedup: 2,60
+Eficiência: 32,6%
+
+Resultado da análise (10.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                 2.219.131    22,19%       R$ 54.316.232,01
+  R$ 50 a 100               2.553.086    25,53%      R$ 194.302.875,86
+  R$ 100 a 500              2.442.437    24,42%      R$ 431.949.059,80
+  R$ 500 a 1 mil              778.771     7,79%      R$ 574.406.574,73
+  R$ 1 mil a 5 mil          1.950.670    19,51%    R$ 3.858.398.539,11
+  R$ 5 mil a 10 mil            47.044     0,47%      R$ 308.115.736,69
+  acima de R$ 10 mil            8.861     0,09%      R$ 163.468.539,18
+  Média: R$ 558,50 | Desvio padrão: R$ 1.116,04
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 10.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 112,666 ms  (mín 111,856 | máx 115,283 | desvio 1,343)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 113,750 ms  (mín 112,402 | máx 129,761 | desvio 6,773)
+Speedup: 0,99
+Eficiência: 99,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 57,907 ms  (mín 56,825 | máx 59,537 | desvio 0,820)
+Speedup: 1,95
+Eficiência: 97,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 55,465 ms  (mín 29,704 | máx 66,710 | desvio 14,067)
+Speedup: 2,03
+Eficiência: 50,8%
+
+Threads: 8 | Tarefas: 32
+Tempo: 42,107 ms  (mín 17,958 | máx 47,703 | desvio 9,018)
+Speedup: 2,68
+Eficiência: 33,4%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 113,205 ms  (mín 112,300 | máx 115,546 | desvio 1,140)
+Speedup: 1,00
+Eficiência: 99,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 73,964 ms  (mín 73,140 | máx 75,115 | desvio 0,631)
+Speedup: 1,52
+Eficiência: 76,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 38,026 ms  (mín 36,996 | máx 66,667 | desvio 9,538)
+Speedup: 2,96
+Eficiência: 74,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 46,309 ms  (mín 19,519 | máx 48,124 | desvio 9,174)
+Speedup: 2,43
+Eficiência: 30,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 57,385 ms  (mín 56,475 | máx 60,953 | desvio 1,277)
+Speedup: 1,96
+Eficiência: 98,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 56,667 ms  (mín 28,965 | máx 74,551 | desvio 14,442)
+Speedup: 1,99
+Eficiência: 49,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 42,341 ms  (mín 31,046 | máx 48,889 | desvio 5,380)
+Speedup: 2,66
+Eficiência: 33,3%
+
+Resultado da análise (10.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 5.584.957.557,38 | Suspeitas: 55.841 | Desvio padrão: R$ 1.116,04
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 50.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 37,344 ms  (mín 36,468 | máx 52,137 | desvio 4,723)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 37,600 ms  (mín 36,777 | máx 39,276 | desvio 0,743)
+Speedup: 0,99
+Eficiência: 99,3%
+
+Threads: 2 | Tarefas: 8
+Tempo: 19,898 ms  (mín 19,005 | máx 32,360 | desvio 3,996)
+Speedup: 1,88
+Eficiência: 93,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 12,435 ms  (mín 10,202 | máx 24,818 | desvio 6,642)
+Speedup: 3,00
+Eficiência: 75,1%
+
+Threads: 8 | Tarefas: 32
+Tempo: 18,031 ms  (mín 6,837 | máx 19,345 | desvio 4,329)
+Speedup: 2,07
+Eficiência: 25,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 38,323 ms  (mín 36,819 | máx 39,269 | desvio 0,835)
+Speedup: 0,97
+Eficiência: 97,4%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 30,681 ms  (mín 29,621 | máx 31,718 | desvio 0,758)
+Speedup: 1,22
+Eficiência: 60,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 16,061 ms  (mín 14,844 | máx 16,867 | desvio 0,656)
+Speedup: 2,33
+Eficiência: 58,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 22,155 ms  (mín 9,558 | máx 24,132 | desvio 5,421)
+Speedup: 1,69
+Eficiência: 21,1%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 19,574 ms  (mín 18,663 | máx 21,417 | desvio 0,881)
+Speedup: 1,91
+Eficiência: 95,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 22,390 ms  (mín 10,226 | máx 28,168 | desvio 5,890)
+Speedup: 1,67
+Eficiência: 41,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 18,090 ms  (mín 7,843 | máx 18,473 | desvio 3,259)
+Speedup: 2,06
+Eficiência: 25,8%
+
+Resultado da análise (50.000.000 transações):
+  Quantidade: 50.000.000
+  Soma: R$ 27.921.095.079,88
+  Média: R$ 558,42
+  Maior transação: R$ 102.533,27 (ID 15824745)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 50.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 160,400 ms  (mín 159,319 | máx 161,404 | desvio 0,698)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 161,046 ms  (mín 159,707 | máx 162,193 | desvio 0,752)
+Speedup: 1,00
+Eficiência: 99,6%
+
+Threads: 2 | Tarefas: 8
+Tempo: 82,005 ms  (mín 80,811 | máx 84,193 | desvio 1,044)
+Speedup: 1,96
+Eficiência: 97,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 56,444 ms  (mín 41,836 | máx 83,334 | desvio 17,677)
+Speedup: 2,84
+Eficiência: 71,0%
+
+Threads: 8 | Tarefas: 32
+Tempo: 50,225 ms  (mín 49,840 | máx 54,636 | desvio 1,731)
+Speedup: 3,19
+Eficiência: 39,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 161,570 ms  (mín 160,230 | máx 163,850 | desvio 1,120)
+Speedup: 0,99
+Eficiência: 99,3%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 96,186 ms  (mín 95,731 | máx 97,081 | desvio 0,448)
+Speedup: 1,67
+Eficiência: 83,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 49,290 ms  (mín 48,213 | máx 51,597 | desvio 0,911)
+Speedup: 3,25
+Eficiência: 81,4%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 54,060 ms  (mín 52,721 | máx 57,394 | desvio 1,280)
+Speedup: 2,97
+Eficiência: 37,1%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 81,269 ms  (mín 80,615 | máx 82,622 | desvio 0,672)
+Speedup: 1,97
+Eficiência: 98,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 61,042 ms  (mín 41,042 | máx 84,320 | desvio 18,648)
+Speedup: 2,63
+Eficiência: 65,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 50,294 ms  (mín 24,748 | máx 53,010 | desvio 8,216)
+Speedup: 3,19
+Eficiência: 39,9%
+
+Resultado da análise (50.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 44.780 (0,090%)
+  Regra 2 (Eletrônicos > R$ 5.000): 270.873 (0,542%)
+  Suspeitas (sem repetir): 278.588 (0,557%) | valor total: R$ 2.353.246.638,56
+  10 maiores suspeitas:
+     1. ID 15.824.745      R$ 102.533,27  Eletrônicos
+     2. ID 42.643.412       R$ 84.513,79  Eletrônicos
+     3. ID 33.574.408       R$ 80.873,14  Eletrônicos
+     4. ID 4.997.030        R$ 79.415,35  Eletrônicos
+     5. ID 11.463.978       R$ 77.083,56  Eletrônicos
+     6. ID 24.240.395       R$ 73.704,21  Eletrônicos
+     7. ID 25.994.345       R$ 70.784,59  Eletrônicos
+     8. ID 17.260.879       R$ 70.085,55  Eletrônicos
+     9. ID 16.599.262       R$ 69.089,02  Eletrônicos
+    10. ID 41.335.031       R$ 67.935,31  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 50.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 105,952 ms  (mín 76,855 | máx 108,500 | desvio 12,212)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 103,678 ms  (mín 77,889 | máx 109,369 | desvio 11,439)
+Speedup: 1,02
+Eficiência: 102,2%
+
+Threads: 2 | Tarefas: 8
+Tempo: 50,793 ms  (mín 40,628 | máx 52,243 | desvio 3,549)
+Speedup: 2,09
+Eficiência: 104,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 53,202 ms  (mín 48,047 | máx 56,710 | desvio 2,910)
+Speedup: 1,99
+Eficiência: 49,8%
+
+Threads: 8 | Tarefas: 32
+Tempo: 27,446 ms  (mín 26,424 | máx 28,577 | desvio 0,689)
+Speedup: 3,86
+Eficiência: 48,3%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 101,503 ms  (mín 77,808 | máx 107,386 | desvio 12,631)
+Speedup: 1,04
+Eficiência: 104,4%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 76,913 ms  (mín 73,979 | máx 79,597 | desvio 1,746)
+Speedup: 1,38
+Eficiência: 68,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 39,701 ms  (mín 38,609 | máx 40,663 | desvio 0,659)
+Speedup: 2,67
+Eficiência: 66,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 48,336 ms  (mín 38,458 | máx 49,664 | desvio 3,229)
+Speedup: 2,19
+Eficiência: 27,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 49,620 ms  (mín 38,893 | máx 54,136 | desvio 5,362)
+Speedup: 2,14
+Eficiência: 106,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 51,203 ms  (mín 41,999 | máx 54,322 | desvio 4,014)
+Speedup: 2,07
+Eficiência: 51,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 27,542 ms  (mín 26,287 | máx 35,197 | desvio 2,589)
+Speedup: 3,85
+Eficiência: 48,1%
+
+Resultado da análise (50.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação      15.999.609    32,0%    R$ 1.474.218.824,76      R$ 92,14    R$ 59.976,47      R$ 5,00
+  Transporte       11.502.125    23,0%      R$ 473.647.808,41      R$ 41,18    R$ 59.996,16      R$ 4,40
+  Eletrônicos       9.495.704    19,0%   R$ 12.875.584.782,77   R$ 1.355,94   R$ 102.533,27      R$ 7,05
+  Saúde             7.502.390    15,0%    R$ 4.125.551.325,88     R$ 549,90    R$ 59.975,95     R$ 10,00
+  Educação          5.500.172    11,0%    R$ 8.972.092.338,06   R$ 1.631,24    R$ 59.956,56    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 50.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 295,034 ms  (mín 292,491 | máx 299,075 | desvio 2,440)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 296,696 ms  (mín 295,763 | máx 300,693 | desvio 1,486)
+Speedup: 0,99
+Eficiência: 99,4%
+
+Threads: 2 | Tarefas: 8
+Tempo: 150,749 ms  (mín 149,352 | máx 154,195 | desvio 1,377)
+Speedup: 1,96
+Eficiência: 97,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 77,060 ms  (mín 76,234 | máx 94,186 | desvio 6,666)
+Speedup: 3,83
+Eficiência: 95,7%
+
+Threads: 8 | Tarefas: 32
+Tempo: 94,824 ms  (mín 93,311 | máx 98,841 | desvio 2,069)
+Speedup: 3,11
+Eficiência: 38,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 298,208 ms  (mín 297,490 | máx 301,585 | desvio 1,675)
+Speedup: 0,99
+Eficiência: 98,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 179,552 ms  (mín 177,644 | máx 184,527 | desvio 2,746)
+Speedup: 1,64
+Eficiência: 82,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 92,171 ms  (mín 90,029 | máx 97,453 | desvio 2,419)
+Speedup: 3,20
+Eficiência: 80,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 104,025 ms  (mín 101,474 | máx 107,324 | desvio 1,711)
+Speedup: 2,84
+Eficiência: 35,5%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 150,299 ms  (mín 150,039 | máx 153,210 | desvio 1,018)
+Speedup: 1,96
+Eficiência: 98,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 77,068 ms  (mín 75,746 | máx 121,240 | desvio 18,291)
+Speedup: 3,83
+Eficiência: 95,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 94,771 ms  (mín 92,551 | máx 99,769 | desvio 2,104)
+Speedup: 3,11
+Eficiência: 38,9%
+
+Resultado da análise (50.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                11.095.762    22,19%      R$ 271.468.813,15
+  R$ 50 a 100              12.766.232    25,53%      R$ 971.795.706,36
+  R$ 100 a 500             12.212.158    24,42%    R$ 2.159.764.483,22
+  R$ 500 a 1 mil            3.896.513     7,79%    R$ 2.874.502.687,11
+  R$ 1 mil a 5 mil          9.750.429    19,50%   R$ 19.287.449.784,13
+  R$ 5 mil a 10 mil           234.126     0,47%    R$ 1.533.603.667,04
+  acima de R$ 10 mil           44.780     0,09%      R$ 822.509.938,87
+  Média: R$ 558,42 | Desvio padrão: R$ 1.116,06
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 50.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 569,799 ms  (mín 562,937 | máx 628,144 | desvio 19,087)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 565,345 ms  (mín 560,626 | máx 570,642 | desvio 3,651)
+Speedup: 1,01
+Eficiência: 100,8%
+
+Threads: 2 | Tarefas: 8
+Tempo: 293,787 ms  (mín 289,748 | máx 302,501 | desvio 3,725)
+Speedup: 1,94
+Eficiência: 97,0%
+
+Threads: 4 | Tarefas: 16
+Tempo: 273,021 ms  (mín 155,926 | máx 299,661 | desvio 51,554)
+Speedup: 2,09
+Eficiência: 52,2%
+
+Threads: 8 | Tarefas: 32
+Tempo: 175,706 ms  (mín 172,430 | máx 187,984 | desvio 5,337)
+Speedup: 3,24
+Eficiência: 40,5%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 566,006 ms  (mín 561,687 | máx 571,195 | desvio 3,212)
+Speedup: 1,01
+Eficiência: 100,7%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 367,984 ms  (mín 365,951 | máx 410,704 | desvio 13,634)
+Speedup: 1,55
+Eficiência: 77,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 187,149 ms  (mín 184,960 | máx 188,292 | desvio 1,008)
+Speedup: 3,04
+Eficiência: 76,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 206,122 ms  (mín 202,489 | máx 213,729 | desvio 3,404)
+Speedup: 2,76
+Eficiência: 34,6%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 285,426 ms  (mín 282,663 | máx 319,425 | desvio 10,980)
+Speedup: 2,00
+Eficiência: 99,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 189,539 ms  (mín 147,687 | máx 252,714 | desvio 34,661)
+Speedup: 3,01
+Eficiência: 75,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 176,144 ms  (mín 172,300 | máx 184,144 | desvio 4,288)
+Speedup: 3,23
+Eficiência: 40,4%
+
+Resultado da análise (50.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 27.921.095.079,88 | Suspeitas: 278.588 | Desvio padrão: R$ 1.116,06
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 73,673 ms  (mín 73,024 | máx 74,860 | desvio 0,582)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 74,219 ms  (mín 73,340 | máx 74,575 | desvio 0,460)
+Speedup: 0,99
+Eficiência: 99,3%
+
+Threads: 2 | Tarefas: 8
+Tempo: 37,824 ms  (mín 36,834 | máx 41,466 | desvio 1,374)
+Speedup: 1,95
+Eficiência: 97,4%
+
+Threads: 4 | Tarefas: 16
+Tempo: 34,587 ms  (mín 33,157 | máx 37,018 | desvio 1,223)
+Speedup: 2,13
+Eficiência: 53,3%
+
+Threads: 8 | Tarefas: 32
+Tempo: 26,969 ms  (mín 25,792 | máx 28,645 | desvio 0,804)
+Speedup: 2,73
+Eficiência: 34,1%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 73,721 ms  (mín 73,270 | máx 77,699 | desvio 1,422)
+Speedup: 1,00
+Eficiência: 99,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 60,280 ms  (mín 59,541 | máx 61,195 | desvio 0,614)
+Speedup: 1,22
+Eficiência: 61,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 31,368 ms  (mín 30,086 | máx 45,145 | desvio 4,825)
+Speedup: 2,35
+Eficiência: 58,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 33,159 ms  (mín 31,868 | máx 44,870 | desvio 5,410)
+Speedup: 2,22
+Eficiência: 27,8%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 37,718 ms  (mín 37,197 | máx 38,645 | desvio 0,535)
+Speedup: 1,95
+Eficiência: 97,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 33,400 ms  (mín 19,116 | máx 39,574 | desvio 7,480)
+Speedup: 2,21
+Eficiência: 55,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 26,644 ms  (mín 25,562 | máx 29,655 | desvio 1,496)
+Speedup: 2,77
+Eficiência: 34,6%
+
+Resultado da análise (100.000.000 transações):
+  Quantidade: 100.000.000
+  Soma: R$ 55.847.598.458,45
+  Média: R$ 558,48
+  Maior transação: R$ 121.494,94 (ID 79949751)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 320,997 ms  (mín 319,687 | máx 327,030 | desvio 2,011)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 322,599 ms  (mín 319,626 | máx 327,887 | desvio 2,565)
+Speedup: 1,00
+Eficiência: 99,5%
+
+Threads: 2 | Tarefas: 8
+Tempo: 165,425 ms  (mín 164,660 | máx 185,593 | desvio 6,367)
+Speedup: 1,94
+Eficiência: 97,0%
+
+Threads: 4 | Tarefas: 16
+Tempo: 89,349 ms  (mín 85,946 | máx 126,749 | desvio 14,912)
+Speedup: 3,59
+Eficiência: 89,8%
+
+Threads: 8 | Tarefas: 32
+Tempo: 98,308 ms  (mín 96,435 | máx 99,564 | desvio 1,004)
+Speedup: 3,27
+Eficiência: 40,8%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 322,236 ms  (mín 320,859 | máx 325,443 | desvio 1,590)
+Speedup: 1,00
+Eficiência: 99,6%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 194,197 ms  (mín 193,071 | máx 208,019 | desvio 4,481)
+Speedup: 1,65
+Eficiência: 82,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 99,623 ms  (mín 97,557 | máx 112,498 | desvio 4,343)
+Speedup: 3,22
+Eficiência: 80,6%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 107,174 ms  (mín 52,652 | máx 109,876 | desvio 17,309)
+Speedup: 3,00
+Eficiência: 37,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 162,175 ms  (mín 161,375 | máx 167,271 | desvio 1,810)
+Speedup: 1,98
+Eficiência: 99,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 104,543 ms  (mín 82,650 | máx 179,567 | desvio 38,632)
+Speedup: 3,07
+Eficiência: 76,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 99,138 ms  (mín 96,889 | máx 100,576 | desvio 1,237)
+Speedup: 3,24
+Eficiência: 40,5%
+
+Resultado da análise (100.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 89.908 (0,090%)
+  Regra 2 (Eletrônicos > R$ 5.000): 543.120 (0,543%)
+  Suspeitas (sem repetir): 558.723 (0,559%) | valor total: R$ 4.715.390.713,62
+  10 maiores suspeitas:
+     1. ID 79.949.751      R$ 121.494,94  Eletrônicos
+     2. ID 15.824.745      R$ 102.533,27  Eletrônicos
+     3. ID 99.196.768       R$ 94.998,12  Eletrônicos
+     4. ID 64.489.509       R$ 87.528,21  Eletrônicos
+     5. ID 42.643.412       R$ 84.513,79  Eletrônicos
+     6. ID 87.869.575       R$ 81.580,72  Eletrônicos
+     7. ID 69.822.135       R$ 81.540,60  Eletrônicos
+     8. ID 33.574.408       R$ 80.873,14  Eletrônicos
+     9. ID 51.617.900       R$ 80.863,96  Eletrônicos
+    10. ID 50.167.780       R$ 80.603,25  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 207,728 ms  (mín 169,994 | máx 215,311 | desvio 14,470)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 203,545 ms  (mín 174,522 | máx 214,796 | desvio 14,007)
+Speedup: 1,02
+Eficiência: 102,1%
+
+Threads: 2 | Tarefas: 8
+Tempo: 102,986 ms  (mín 89,838 | máx 129,815 | desvio 10,607)
+Speedup: 2,02
+Eficiência: 100,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 92,138 ms  (mín 80,968 | máx 108,396 | desvio 7,067)
+Speedup: 2,25
+Eficiência: 56,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 55,340 ms  (mín 52,233 | máx 69,225 | desvio 6,343)
+Speedup: 3,75
+Eficiência: 46,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 198,099 ms  (mín 156,575 | máx 211,062 | desvio 21,657)
+Speedup: 1,05
+Eficiência: 104,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 156,404 ms  (mín 152,974 | máx 158,391 | desvio 1,493)
+Speedup: 1,33
+Eficiência: 66,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 80,080 ms  (mín 78,903 | máx 83,296 | desvio 1,451)
+Speedup: 2,59
+Eficiência: 64,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 85,995 ms  (mín 81,986 | máx 96,863 | desvio 5,820)
+Speedup: 2,42
+Eficiência: 30,2%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 105,058 ms  (mín 90,387 | máx 108,371 | desvio 5,823)
+Speedup: 1,98
+Eficiência: 98,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 94,957 ms  (mín 84,398 | máx 110,766 | desvio 8,272)
+Speedup: 2,19
+Eficiência: 54,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 55,505 ms  (mín 53,042 | máx 66,227 | desvio 5,304)
+Speedup: 3,74
+Eficiência: 46,8%
+
+Resultado da análise (100.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação      32.002.287    32,0%    R$ 2.947.104.616,58      R$ 92,09    R$ 59.988,36      R$ 5,00
+  Transporte       23.000.522    23,0%      R$ 946.203.328,90      R$ 41,14    R$ 59.996,97      R$ 4,40
+  Eletrônicos      18.997.329    19,0%   R$ 25.764.428.342,63   R$ 1.356,21   R$ 121.494,94      R$ 7,05
+  Saúde            15.001.852    15,0%    R$ 8.249.654.878,66     R$ 549,91    R$ 59.997,11     R$ 10,00
+  Educação         10.998.010    11,0%   R$ 17.940.207.291,68   R$ 1.631,22    R$ 59.956,56    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 590,042 ms  (mín 583,831 | máx 608,262 | desvio 7,089)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 593,068 ms  (mín 589,786 | máx 599,018 | desvio 2,681)
+Speedup: 0,99
+Eficiência: 99,5%
+
+Threads: 2 | Tarefas: 8
+Tempo: 299,930 ms  (mín 298,450 | máx 309,430 | desvio 3,103)
+Speedup: 1,97
+Eficiência: 98,4%
+
+Threads: 4 | Tarefas: 16
+Tempo: 157,901 ms  (mín 155,050 | máx 170,940 | desvio 5,231)
+Speedup: 3,74
+Eficiência: 93,4%
+
+Threads: 8 | Tarefas: 32
+Tempo: 178,145 ms  (mín 174,797 | máx 189,260 | desvio 5,211)
+Speedup: 3,31
+Eficiência: 41,4%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 596,501 ms  (mín 590,033 | máx 603,592 | desvio 4,051)
+Speedup: 0,99
+Eficiência: 98,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 367,329 ms  (mín 352,924 | máx 373,633 | desvio 8,200)
+Speedup: 1,61
+Eficiência: 80,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 187,429 ms  (mín 179,266 | máx 197,226 | desvio 6,177)
+Speedup: 3,15
+Eficiência: 78,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 203,760 ms  (mín 192,256 | máx 214,987 | desvio 7,197)
+Speedup: 2,90
+Eficiência: 36,2%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 300,050 ms  (mín 297,895 | máx 304,304 | desvio 1,623)
+Speedup: 1,97
+Eficiência: 98,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 159,976 ms  (mín 151,070 | máx 209,609 | desvio 20,380)
+Speedup: 3,69
+Eficiência: 92,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 177,113 ms  (mín 174,943 | máx 179,375 | desvio 1,437)
+Speedup: 3,33
+Eficiência: 41,6%
+
+Resultado da análise (100.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                22.187.150    22,19%      R$ 542.819.211,94
+  R$ 50 a 100              25.535.065    25,54%    R$ 1.943.638.140,90
+  R$ 100 a 500             24.426.087    24,43%    R$ 4.319.809.483,41
+  R$ 500 a 1 mil            7.793.577     7,79%    R$ 5.748.465.007,64
+  R$ 1 mil a 5 mil         19.498.786    19,50%   R$ 38.571.953.142,10
+  R$ 5 mil a 10 mil           469.427     0,47%    R$ 3.074.815.500,49
+  acima de R$ 10 mil           89.908     0,09%    R$ 1.646.097.971,97
+  Média: R$ 558,48 | Desvio padrão: R$ 1.115,44
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 100.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1143,810 ms  (mín 1120,932 | máx 1464,399 | desvio 103,326)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1140,385 ms  (mín 1124,825 | máx 1190,252 | desvio 19,466)
+Speedup: 1,00
+Eficiência: 100,3%
+
+Threads: 2 | Tarefas: 8
+Tempo: 595,815 ms  (mín 592,117 | máx 616,055 | desvio 10,716)
+Speedup: 1,92
+Eficiência: 96,0%
+
+Threads: 4 | Tarefas: 16
+Tempo: 415,247 ms  (mín 340,751 | máx 577,032 | desvio 63,977)
+Speedup: 2,75
+Eficiência: 68,9%
+
+Threads: 8 | Tarefas: 32
+Tempo: 358,824 ms  (mín 349,215 | máx 375,809 | desvio 8,102)
+Speedup: 3,19
+Eficiência: 39,8%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1139,659 ms  (mín 1128,290 | máx 1143,861 | desvio 5,899)
+Speedup: 1,00
+Eficiência: 100,4%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 739,246 ms  (mín 736,859 | máx 744,298 | desvio 2,388)
+Speedup: 1,55
+Eficiência: 77,4%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 381,749 ms  (mín 379,461 | máx 459,749 | desvio 24,679)
+Speedup: 3,00
+Eficiência: 74,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 408,932 ms  (mín 400,599 | máx 417,062 | desvio 5,996)
+Speedup: 2,80
+Eficiência: 35,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 575,802 ms  (mín 568,752 | máx 587,287 | desvio 5,979)
+Speedup: 1,99
+Eficiência: 99,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 361,472 ms  (mín 300,802 | máx 605,536 | desvio 103,051)
+Speedup: 3,16
+Eficiência: 79,1%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 358,137 ms  (mín 346,222 | máx 367,127 | desvio 6,806)
+Speedup: 3,19
+Eficiência: 39,9%
+
+Resultado da análise (100.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 55.847.598.458,45 | Suspeitas: 558.723 | Desvio padrão: R$ 1.115,44
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 250.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 186,730 ms  (mín 185,617 | máx 189,678 | desvio 1,215)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 189,722 ms  (mín 186,342 | máx 192,089 | desvio 1,951)
+Speedup: 0,98
+Eficiência: 98,4%
+
+Threads: 2 | Tarefas: 8
+Tempo: 96,775 ms  (mín 95,816 | máx 101,519 | desvio 1,830)
+Speedup: 1,93
+Eficiência: 96,5%
+
+Threads: 4 | Tarefas: 16
+Tempo: 66,112 ms  (mín 50,663 | máx 109,398 | desvio 18,612)
+Speedup: 2,82
+Eficiência: 70,6%
+
+Threads: 8 | Tarefas: 32
+Tempo: 71,991 ms  (mín 70,186 | máx 76,971 | desvio 2,219)
+Speedup: 2,59
+Eficiência: 32,4%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 187,292 ms  (mín 186,106 | máx 189,363 | desvio 0,957)
+Speedup: 1,00
+Eficiência: 99,7%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 150,362 ms  (mín 149,861 | máx 151,750 | desvio 0,560)
+Speedup: 1,24
+Eficiência: 62,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 77,203 ms  (mín 76,365 | máx 77,824 | desvio 0,408)
+Speedup: 2,42
+Eficiência: 60,5%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 86,384 ms  (mín 61,110 | máx 92,174 | desvio 8,372)
+Speedup: 2,16
+Eficiência: 27,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 95,530 ms  (mín 94,955 | máx 98,014 | desvio 0,841)
+Speedup: 1,95
+Eficiência: 97,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 63,259 ms  (mín 51,010 | máx 76,803 | desvio 8,468)
+Speedup: 2,95
+Eficiência: 73,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 71,562 ms  (mín 49,423 | máx 73,641 | desvio 7,141)
+Speedup: 2,61
+Eficiência: 32,6%
+
+Resultado da análise (250.000.000 transações):
+  Quantidade: 250.000.000
+  Soma: R$ 139.620.181.690,32
+  Média: R$ 558,48
+  Maior transação: R$ 140.514,32 (ID 116046179)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 250.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 803,304 ms  (mín 798,606 | máx 810,414 | desvio 2,913)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 807,144 ms  (mín 802,906 | máx 824,062 | desvio 8,370)
+Speedup: 1,00
+Eficiência: 99,5%
+
+Threads: 2 | Tarefas: 8
+Tempo: 423,183 ms  (mín 418,937 | máx 438,112 | desvio 5,347)
+Speedup: 1,90
+Eficiência: 94,9%
+
+Threads: 4 | Tarefas: 16
+Tempo: 232,095 ms  (mín 222,866 | máx 275,462 | desvio 16,873)
+Speedup: 3,46
+Eficiência: 86,5%
+
+Threads: 8 | Tarefas: 32
+Tempo: 246,045 ms  (mín 242,031 | máx 254,421 | desvio 3,616)
+Speedup: 3,26
+Eficiência: 40,8%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 804,540 ms  (mín 803,667 | máx 807,513 | desvio 1,111)
+Speedup: 1,00
+Eficiência: 99,8%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 486,092 ms  (mín 483,930 | máx 529,557 | desvio 13,880)
+Speedup: 1,65
+Eficiência: 82,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 251,490 ms  (mín 248,196 | máx 255,900 | desvio 2,561)
+Speedup: 3,19
+Eficiência: 79,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 265,582 ms  (mín 132,965 | máx 270,982 | desvio 42,217)
+Speedup: 3,02
+Eficiência: 37,8%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 405,359 ms  (mín 404,534 | máx 407,811 | desvio 1,070)
+Speedup: 1,98
+Eficiência: 99,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 251,018 ms  (mín 208,766 | máx 307,017 | desvio 35,415)
+Speedup: 3,20
+Eficiência: 80,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 249,176 ms  (mín 245,795 | máx 274,799 | desvio 8,657)
+Speedup: 3,22
+Eficiência: 40,3%
+
+Resultado da análise (250.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 225.166 (0,090%)
+  Regra 2 (Eletrônicos > R$ 5.000): 1.356.592 (0,543%)
+  Suspeitas (sem repetir): 1.395.684 (0,558%) | valor total: R$ 11.779.367.413,60
+  10 maiores suspeitas:
+     1. ID 116.046.179     R$ 140.514,32  Eletrônicos
+     2. ID 79.949.751      R$ 121.494,94  Eletrônicos
+     3. ID 230.147.365     R$ 111.115,11  Eletrônicos
+     4. ID 15.824.745      R$ 102.533,27  Eletrônicos
+     5. ID 148.969.571     R$ 101.953,37  Eletrônicos
+     6. ID 162.348.809      R$ 98.438,26  Eletrônicos
+     7. ID 99.196.768       R$ 94.998,12  Eletrônicos
+     8. ID 64.489.509       R$ 87.528,21  Eletrônicos
+     9. ID 208.793.770      R$ 86.666,82  Eletrônicos
+    10. ID 42.643.412       R$ 84.513,79  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 250.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 527,634 ms  (mín 413,427 | máx 553,706 | desvio 39,697)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 525,417 ms  (mín 409,277 | máx 545,139 | desvio 45,481)
+Speedup: 1,00
+Eficiência: 100,4%
+
+Threads: 2 | Tarefas: 8
+Tempo: 266,508 ms  (mín 252,138 | máx 286,943 | desvio 11,471)
+Speedup: 1,98
+Eficiência: 99,0%
+
+Threads: 4 | Tarefas: 16
+Tempo: 238,900 ms  (mín 138,049 | máx 262,799 | desvio 34,637)
+Speedup: 2,21
+Eficiência: 55,2%
+
+Threads: 8 | Tarefas: 32
+Tempo: 149,375 ms  (mín 145,681 | máx 171,198 | desvio 7,513)
+Speedup: 3,53
+Eficiência: 44,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 500,253 ms  (mín 416,810 | máx 533,216 | desvio 36,210)
+Speedup: 1,05
+Eficiência: 105,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 381,670 ms  (mín 374,474 | máx 394,392 | desvio 6,128)
+Speedup: 1,38
+Eficiência: 69,1%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 200,545 ms  (mín 195,427 | máx 203,155 | desvio 2,614)
+Speedup: 2,63
+Eficiência: 65,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 212,554 ms  (mín 211,727 | máx 229,239 | desvio 5,298)
+Speedup: 2,48
+Eficiência: 31,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 267,322 ms  (mín 223,135 | máx 283,986 | desvio 19,092)
+Speedup: 1,97
+Eficiência: 98,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 241,707 ms  (mín 231,154 | máx 265,220 | desvio 11,589)
+Speedup: 2,18
+Eficiência: 54,6%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 150,397 ms  (mín 148,194 | máx 155,564 | desvio 2,238)
+Speedup: 3,51
+Eficiência: 43,9%
+
+Resultado da análise (250.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação      80.010.950    32,0%    R$ 7.375.475.168,56      R$ 92,18    R$ 59.997,26      R$ 5,00
+  Transporte       57.493.679    23,0%    R$ 2.367.230.434,68      R$ 41,17    R$ 59.996,97      R$ 4,40
+  Eletrônicos      47.494.276    19,0%   R$ 64.399.490.059,40   R$ 1.355,94   R$ 140.514,32      R$ 5,54
+  Saúde            37.500.937    15,0%   R$ 20.615.534.906,67     R$ 549,73    R$ 59.997,52     R$ 10,00
+  Educação         27.500.158    11,0%   R$ 44.862.451.121,01   R$ 1.631,35    R$ 59.983,51    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 250.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1466,769 ms  (mín 1459,154 | máx 1487,979 | desvio 8,434)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1477,883 ms  (mín 1460,008 | máx 1494,349 | desvio 9,766)
+Speedup: 0,99
+Eficiência: 99,2%
+
+Threads: 2 | Tarefas: 8
+Tempo: 751,578 ms  (mín 746,622 | máx 781,507 | desvio 10,614)
+Speedup: 1,95
+Eficiência: 97,6%
+
+Threads: 4 | Tarefas: 16
+Tempo: 399,535 ms  (mín 393,302 | máx 426,017 | desvio 11,188)
+Speedup: 3,67
+Eficiência: 91,8%
+
+Threads: 8 | Tarefas: 32
+Tempo: 440,325 ms  (mín 429,844 | máx 468,314 | desvio 11,675)
+Speedup: 3,33
+Eficiência: 41,6%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1489,658 ms  (mín 1482,708 | máx 1502,372 | desvio 5,419)
+Speedup: 0,98
+Eficiência: 98,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 917,412 ms  (mín 888,923 | máx 957,320 | desvio 17,635)
+Speedup: 1,60
+Eficiência: 79,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 464,034 ms  (mín 448,056 | máx 529,269 | desvio 22,758)
+Speedup: 3,16
+Eficiência: 79,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 503,565 ms  (mín 491,009 | máx 510,823 | desvio 6,243)
+Speedup: 2,91
+Eficiência: 36,4%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 749,924 ms  (mín 747,885 | máx 760,418 | desvio 4,499)
+Speedup: 1,96
+Eficiência: 97,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 401,849 ms  (mín 377,719 | máx 451,157 | desvio 27,983)
+Speedup: 3,65
+Eficiência: 91,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 438,503 ms  (mín 429,968 | máx 459,879 | desvio 8,769)
+Speedup: 3,34
+Eficiência: 41,8%
+
+Resultado da análise (250.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50                55.455.650    22,18%    R$ 1.356.719.594,82
+  R$ 50 a 100              63.837.747    25,54%    R$ 4.858.958.620,15
+  R$ 100 a 500             61.075.800    24,43%   R$ 10.800.732.085,10
+  R$ 500 a 1 mil           19.482.713     7,79%   R$ 14.370.105.123,25
+  R$ 1 mil a 5 mil         48.750.877    19,50%   R$ 96.440.562.989,05
+  R$ 5 mil a 10 mil         1.172.047     0,47%    R$ 7.675.314.469,90
+  acima de R$ 10 mil          225.166     0,09%    R$ 4.117.788.808,05
+  Média: R$ 558,48 | Desvio padrão: R$ 1.115,44
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 250.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 2890,245 ms  (mín 2841,867 | máx 3086,326 | desvio 84,448)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 2891,222 ms  (mín 2863,495 | máx 3023,344 | desvio 46,498)
+Speedup: 1,00
+Eficiência: 100,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 1557,446 ms  (mín 1537,108 | máx 1950,813 | desvio 124,691)
+Speedup: 1,86
+Eficiência: 92,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 1567,072 ms  (mín 834,362 | máx 1577,992 | desvio 346,391)
+Speedup: 1,84
+Eficiência: 46,1%
+
+Threads: 8 | Tarefas: 32
+Tempo: 996,851 ms  (mín 882,828 | máx 1022,984 | desvio 39,486)
+Speedup: 2,90
+Eficiência: 36,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 2863,390 ms  (mín 2855,870 | máx 3043,784 | desvio 61,507)
+Speedup: 1,01
+Eficiência: 100,9%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 1948,047 ms  (mín 1853,905 | máx 1994,742 | desvio 38,959)
+Speedup: 1,48
+Eficiência: 74,2%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 998,564 ms  (mín 979,021 | máx 1026,634 | desvio 14,416)
+Speedup: 2,89
+Eficiência: 72,4%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 1066,738 ms  (mín 1010,819 | máx 1109,306 | desvio 27,817)
+Speedup: 2,71
+Eficiência: 33,9%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 1476,522 ms  (mín 1435,325 | máx 1525,432 | desvio 23,630)
+Speedup: 1,96
+Eficiência: 97,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 1564,301 ms  (mín 1209,639 | máx 1584,388 | desvio 113,564)
+Speedup: 1,85
+Eficiência: 46,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 972,073 ms  (mín 888,050 | máx 994,408 | desvio 29,775)
+Speedup: 2,97
+Eficiência: 37,2%
+
+Resultado da análise (250.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 139.620.181.690,32 | Suspeitas: 1.395.684 | Desvio padrão: R$ 1.115,44
+
+==============================================================
+ ANÁLISE: Agregação financeira (soma, média, maior e menor)
+ Quantidade de transações: 500.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 378,902 ms  (mín 374,411 | máx 385,206 | desvio 3,773)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 380,216 ms  (mín 376,209 | máx 390,309 | desvio 4,818)
+Speedup: 1,00
+Eficiência: 99,7%
+
+Threads: 2 | Tarefas: 8
+Tempo: 196,817 ms  (mín 194,901 | máx 241,906 | desvio 14,320)
+Speedup: 1,93
+Eficiência: 96,3%
+
+Threads: 4 | Tarefas: 16
+Tempo: 132,269 ms  (mín 107,087 | máx 194,549 | desvio 27,823)
+Speedup: 2,86
+Eficiência: 71,6%
+
+Threads: 8 | Tarefas: 32
+Tempo: 127,742 ms  (mín 124,977 | máx 134,441 | desvio 2,935)
+Speedup: 2,97
+Eficiência: 37,1%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 376,507 ms  (mín 374,897 | máx 385,549 | desvio 3,247)
+Speedup: 1,01
+Eficiência: 100,6%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 302,122 ms  (mín 300,736 | máx 303,332 | desvio 0,950)
+Speedup: 1,25
+Eficiência: 62,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 157,204 ms  (mín 153,968 | máx 198,007 | desvio 13,587)
+Speedup: 2,41
+Eficiência: 60,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 168,967 ms  (mín 84,534 | máx 180,989 | desvio 27,719)
+Speedup: 2,24
+Eficiência: 28,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 191,897 ms  (mín 190,547 | máx 194,584 | desvio 1,127)
+Speedup: 1,97
+Eficiência: 98,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 129,372 ms  (mín 114,679 | máx 175,497 | desvio 26,139)
+Speedup: 2,93
+Eficiência: 73,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 127,542 ms  (mín 124,692 | máx 140,796 | desvio 4,538)
+Speedup: 2,97
+Eficiência: 37,1%
+
+Resultado da análise (500.000.000 transações):
+  Quantidade: 500.000.000
+  Soma: R$ 279.272.122.219,68
+  Média: R$ 558,54
+  Maior transação: R$ 140.514,32 (ID 116046179)
+  Menor transação: R$ 4,40 (ID 8973)
+
+==============================================================
+ ANÁLISE: Detecção de transações suspeitas
+ Quantidade de transações: 500.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1610,765 ms  (mín 1605,129 | máx 1668,667 | desvio 24,420)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1615,134 ms  (mín 1598,338 | máx 1660,281 | desvio 23,294)
+Speedup: 1,00
+Eficiência: 99,7%
+
+Threads: 2 | Tarefas: 8
+Tempo: 851,639 ms  (mín 820,874 | máx 855,370 | desvio 9,979)
+Speedup: 1,89
+Eficiência: 94,6%
+
+Threads: 4 | Tarefas: 16
+Tempo: 465,553 ms  (mín 451,480 | máx 493,230 | desvio 16,756)
+Speedup: 3,46
+Eficiência: 86,5%
+
+Threads: 8 | Tarefas: 32
+Tempo: 492,340 ms  (mín 487,831 | máx 497,522 | desvio 3,467)
+Speedup: 3,27
+Eficiência: 40,9%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1608,381 ms  (mín 1606,766 | máx 1615,515 | desvio 2,818)
+Speedup: 1,00
+Eficiência: 100,1%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 971,569 ms  (mín 969,609 | máx 975,682 | desvio 1,884)
+Speedup: 1,66
+Eficiência: 82,9%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 504,431 ms  (mín 500,026 | máx 510,913 | desvio 3,088)
+Speedup: 3,19
+Eficiência: 79,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 529,712 ms  (mín 440,466 | máx 533,418 | desvio 28,442)
+Speedup: 3,04
+Eficiência: 38,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 811,134 ms  (mín 809,975 | máx 825,416 | desvio 6,315)
+Speedup: 1,99
+Eficiência: 99,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 473,719 ms  (mín 437,396 | máx 537,912 | desvio 29,819)
+Speedup: 3,40
+Eficiência: 85,0%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 492,602 ms  (mín 489,017 | máx 496,945 | desvio 2,591)
+Speedup: 3,27
+Eficiência: 40,9%
+
+Resultado da análise (500.000.000 transações):
+  Regra 1 (valor > R$ 10.000): 450.512 (0,090%)
+  Regra 2 (Eletrônicos > R$ 5.000): 2.714.870 (0,543%)
+  Suspeitas (sem repetir): 2.792.939 (0,559%) | valor total: R$ 23.565.142.647,47
+  10 maiores suspeitas:
+     1. ID 116.046.179     R$ 140.514,32  Eletrônicos
+     2. ID 79.949.751      R$ 121.494,94  Eletrônicos
+     3. ID 230.147.365     R$ 111.115,11  Eletrônicos
+     4. ID 440.668.061     R$ 103.378,13  Eletrônicos
+     5. ID 15.824.745      R$ 102.533,27  Eletrônicos
+     6. ID 148.969.571     R$ 101.953,37  Eletrônicos
+     7. ID 462.935.666     R$ 101.306,57  Eletrônicos
+     8. ID 304.516.906      R$ 99.196,72  Eletrônicos
+     9. ID 162.348.809      R$ 98.438,26  Eletrônicos
+    10. ID 482.025.544      R$ 97.608,09  Eletrônicos
+
+==============================================================
+ ANÁLISE: Estatísticas por categoria
+ Quantidade de transações: 500.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 1066,066 ms  (mín 1021,850 | máx 1107,954 | desvio 20,894)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 1055,476 ms  (mín 890,670 | máx 1076,363 | desvio 64,332)
+Speedup: 1,01
+Eficiência: 101,0%
+
+Threads: 2 | Tarefas: 8
+Tempo: 563,514 ms  (mín 528,904 | máx 571,511 | desvio 14,877)
+Speedup: 1,89
+Eficiência: 94,6%
+
+Threads: 4 | Tarefas: 16
+Tempo: 475,513 ms  (mín 317,764 | máx 536,716 | desvio 84,970)
+Speedup: 2,24
+Eficiência: 56,0%
+
+Threads: 8 | Tarefas: 32
+Tempo: 301,307 ms  (mín 275,633 | máx 315,509 | desvio 10,985)
+Speedup: 3,54
+Eficiência: 44,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 1050,607 ms  (mín 939,829 | máx 1069,040 | desvio 46,316)
+Speedup: 1,01
+Eficiência: 101,5%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 764,283 ms  (mín 752,941 | máx 776,319 | desvio 7,617)
+Speedup: 1,39
+Eficiência: 69,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 402,390 ms  (mín 397,523 | máx 411,518 | desvio 4,049)
+Speedup: 2,65
+Eficiência: 66,2%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 426,006 ms  (mín 424,219 | máx 436,158 | desvio 3,552)
+Speedup: 2,50
+Eficiência: 31,3%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 535,004 ms  (mín 523,513 | máx 540,299 | desvio 4,299)
+Speedup: 1,99
+Eficiência: 99,6%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 481,469 ms  (mín 338,745 | máx 537,209 | desvio 52,788)
+Speedup: 2,21
+Eficiência: 55,4%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 304,569 ms  (mín 277,411 | máx 319,576 | desvio 13,331)
+Speedup: 3,50
+Eficiência: 43,8%
+
+Resultado da análise (500.000.000 transações):
+  Categoria        Quantidade    % qtd            Valor total   Valor médio           Maior        Menor
+  Alimentação     160.005.542    32,0%   R$ 14.752.190.614,96      R$ 92,20    R$ 59.997,26      R$ 5,00
+  Transporte      114.991.283    23,0%    R$ 4.731.954.121,16      R$ 41,15    R$ 59.998,45      R$ 4,40
+  Eletrônicos      94.994.856    19,0%  R$ 128.814.827.034,60   R$ 1.356,02   R$ 140.514,32      R$ 5,54
+  Saúde            75.005.893    15,0%   R$ 41.241.518.241,28     R$ 549,84    R$ 59.997,52     R$ 10,00
+  Educação         55.002.426    11,0%   R$ 89.731.632.207,68   R$ 1.631,41    R$ 59.984,38    R$ 250,00
+
+==============================================================
+ ANÁLISE: Distribuição por faixa de valor e desvio padrão
+ Quantidade de transações: 500.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 2945,481 ms  (mín 2918,011 | máx 2986,481 | desvio 21,318)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 2958,148 ms  (mín 2921,711 | máx 2987,074 | desvio 21,099)
+Speedup: 1,00
+Eficiência: 99,6%
+
+Threads: 2 | Tarefas: 8
+Tempo: 1506,055 ms  (mín 1497,299 | máx 1553,125 | desvio 20,050)
+Speedup: 1,96
+Eficiência: 97,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 813,346 ms  (mín 803,977 | máx 862,258 | desvio 17,496)
+Speedup: 3,62
+Eficiência: 90,5%
+
+Threads: 8 | Tarefas: 32
+Tempo: 872,111 ms  (mín 865,614 | máx 890,781 | desvio 7,511)
+Speedup: 3,38
+Eficiência: 42,2%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 2982,500 ms  (mín 2935,183 | máx 3040,322 | desvio 27,312)
+Speedup: 0,99
+Eficiência: 98,8%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 1802,795 ms  (mín 1773,033 | máx 1893,053 | desvio 48,075)
+Speedup: 1,63
+Eficiência: 81,7%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 946,315 ms  (mín 896,207 | máx 981,797 | desvio 26,488)
+Speedup: 3,11
+Eficiência: 77,8%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 995,638 ms  (mín 979,875 | máx 1008,302 | desvio 9,018)
+Speedup: 2,96
+Eficiência: 37,0%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 1497,718 ms  (mín 1479,601 | máx 1502,760 | desvio 6,924)
+Speedup: 1,97
+Eficiência: 98,3%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 824,265 ms  (mín 752,706 | máx 856,010 | desvio 38,722)
+Speedup: 3,57
+Eficiência: 89,3%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 874,802 ms  (mín 866,042 | máx 881,741 | desvio 5,190)
+Speedup: 3,37
+Eficiência: 42,1%
+
+Resultado da análise (500.000.000 transações):
+  Faixa                    Quantidade     % qtd            Valor total
+  até R$ 50               110.916.042    22,18%    R$ 2.713.586.081,59
+  R$ 50 a 100             127.667.758    25,53%    R$ 9.717.349.297,78
+  R$ 100 a 500            122.149.986    24,43%   R$ 21.602.328.265,87
+  R$ 500 a 1 mil           38.956.452     7,79%   R$ 28.733.270.843,31
+  R$ 1 mil a 5 mil         97.513.781    19,50%  R$ 192.913.099.883,32
+  R$ 5 mil a 10 mil         2.345.469     0,47%   R$ 15.358.136.508,82
+  acima de R$ 10 mil          450.512     0,09%    R$ 8.234.351.338,99
+  Média: R$ 558,54 | Desvio padrão: R$ 1.115,21
+
+==============================================================
+ ANÁLISE: Todas as análises numa única passada (experimento extra)
+ Quantidade de transações: 500.000.000 | tempos = mediana de 10 repetições
+==============================================================
+------------------------- SEQUENCIAL -------------------------
+Tempo: 5727,073 ms  (mín 5633,351 | máx 5912,575 | desvio 80,247)
+
+-------------------------- EXECUTOR --------------------------
+Threads: 1 | Tarefas: 4
+Tempo: 5681,141 ms  (mín 5622,348 | máx 5943,128 | desvio 104,681)
+Speedup: 1,01
+Eficiência: 100,8%
+
+Threads: 2 | Tarefas: 8
+Tempo: 3020,060 ms  (mín 2906,850 | máx 3118,770 | desvio 55,730)
+Speedup: 1,90
+Eficiência: 94,8%
+
+Threads: 4 | Tarefas: 16
+Tempo: 1792,289 ms  (mín 1616,967 | máx 2986,498 | desvio 557,343)
+Speedup: 3,20
+Eficiência: 79,9%
+
+Threads: 8 | Tarefas: 32
+Tempo: 1768,399 ms  (mín 1753,286 | máx 1900,657 | desvio 42,777)
+Speedup: 3,24
+Eficiência: 40,5%
+
+-------------------- EXECUTOR + AFFINITY ---------------------
+Threads: 1 | Tarefas: 4
+CPUs: 0
+Tempo: 5667,749 ms  (mín 5641,987 | máx 5734,512 | desvio 37,585)
+Speedup: 1,01
+Eficiência: 101,0%
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,1
+Tempo: 3728,340 ms  (mín 3686,180 | máx 3806,922 | desvio 39,074)
+Speedup: 1,54
+Eficiência: 76,8%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,1,2,3
+Tempo: 1936,169 ms  (mín 1902,343 | máx 2262,167 | desvio 106,513)
+Speedup: 2,96
+Eficiência: 73,9%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,1,2,3,4,5,6,7
+Tempo: 2033,547 ms  (mín 2009,308 | máx 2056,906 | desvio 16,479)
+Speedup: 2,82
+Eficiência: 35,2%
+
+------ EXECUTOR + AFFINITY (1 thread por núcleo físico) ------
+Threads: 1 | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+
+Threads: 2 | Tarefas: 8
+CPUs: 0,2
+Tempo: 2862,329 ms  (mín 2830,974 | máx 2908,572 | desvio 26,475)
+Speedup: 2,00
+Eficiência: 100,0%
+
+Threads: 4 | Tarefas: 16
+CPUs: 0,2,4,6
+Tempo: 1970,047 ms  (mín 1743,013 | máx 2942,196 | desvio 444,651)
+Speedup: 2,91
+Eficiência: 72,7%
+
+Threads: 8 | Tarefas: 32
+CPUs: 0,2,4,6,8,10,12,14
+Tempo: 1760,581 ms  (mín 1741,453 | máx 1767,907 | desvio 9,324)
+Speedup: 3,25
+Eficiência: 40,7%
+
+Resultado da análise (500.000.000 transações):
+  (os mesmos resultados das quatro análises separadas, calculados numa passada só)
+  Soma: R$ 279.272.122.219,68 | Suspeitas: 2.792.939 | Desvio padrão: R$ 1.115,21
+
+
+Resumo salvo em:  C:\ppd\Projeto_Transacoes_Paralelas\resultados\benchmark.csv
+Tempos de cada repetição: C:\ppd\Projeto_Transacoes_Paralelas\resultados\benchmark_bruto.csv
+Saída do console: C:\ppd\Projeto_Transacoes_Paralelas\resultados\benchmark_console.txt
+Gráficos: rode  py gerar_graficos.py  (Windows) ou  python3 gerar_graficos.py  (Linux).

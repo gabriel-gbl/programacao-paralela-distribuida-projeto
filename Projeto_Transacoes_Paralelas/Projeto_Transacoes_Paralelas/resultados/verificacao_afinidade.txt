@@ -1,0 +1,25 @@
+==============================================================
+ ANÁLISE PARALELA DE TRANSAÇÕES FINANCEIRAS
+==============================================================
+Data: 18/10/2026 18:44
+Sistema: Windows 11 10.0 (amd64)
+Processador: AMD Ryzen 7 5700U with Radeon Graphics
+CPUs lógicas: 16 | Memória máxima do Java: 2,8 GB | Java 21.0.12.1
+Volumes: 1.000.000, 10.000.000 | Threads: 1,2,4,8 | Tarefas por thread: 4 | Repetições: 10
+Análises: agregacao, suspeitas, categorias, faixas, completa | Modos: Sequencial, Executor, Executor+Affinity, Executor+Affinity-nucleo
+
+CPUs lógicas permitidas para o processo: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+Afinidade: disponível (OpenHFT); a conferência pergunta ao sistema operacional em que CPU cada thread roda
+Núcleos físicos: 8 núcleos físicos, 16 CPUs lógicas (até 2 por núcleo: hyperthreading)
+CPUs do modo "1 thread por núcleo físico": 0,2,4,6,8,10,12,14
+
+Verificação da afinidade (CPU em que cada thread realmente rodou, segundo o sistema operacional):
+  Executor+Affinity           1 thread  | pedidas: 0                | OK: observadas 0
+  Executor+Affinity-nucleo    1 thread  | pedidas: 0                | NAO_APLICAVEL: mesmas CPUs do modo Executor+Affinity (aqui as CPUs em sequência já são núcleos diferentes)
+  Executor+Affinity           2 threads | pedidas: 0,1              | OK: observadas 0,1
+  Executor+Affinity-nucleo    2 threads | pedidas: 0,2              | OK: observadas 0,2
+  Executor+Affinity           4 threads | pedidas: 0,1,2,3          | OK: observadas 0,1,2,3
+  Executor+Affinity-nucleo    4 threads | pedidas: 0,2,4,6          | OK: observadas 0,2,4,6
+  Executor+Affinity           8 threads | pedidas: 0,1,2,3,4,5,6,7  | OK: observadas 0,1,2,3,4,5,6,7
+  Executor+Affinity-nucleo    8 threads | pedidas: 0,2,4,6,8,10,12,14 | OK: observadas 0,2,4,6,8,10,12,14
+
